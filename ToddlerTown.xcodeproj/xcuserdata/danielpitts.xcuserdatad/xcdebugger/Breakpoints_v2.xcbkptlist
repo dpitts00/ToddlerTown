@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "BD6B0E86-DD37-493D-8C37-8F95A9D0836A"
+   type = "1"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D1C4014E-AE03-478D-A628-F252906A417C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ToddlerTown/Views/MapSearchTest.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "253"
+            endingLineNumber = "253"
+            landmarkName = "searchNearby()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "75DDD335-DB9A-44A8-9CEB-012143B5DD2C"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ToddlerTown/Views/MapSearchTest.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "255"
+            endingLineNumber = "255"
+            landmarkName = "searchNearby()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "75DDD335-DB9A-44A8-9CEB-012143B5DD2C - a980f3bc007d11b0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ToddlerTown.MapSearchTest.searchNearby() -&gt; ()"
+                  moduleName = "ToddlerTown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielpitts/Desktop/ToddlerTown/ToddlerTown/Views/MapSearchTest.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "223"
+                  endingLineNumber = "223"
+                  offsetFromSymbolStart = "752">
+               </Location>
+               <Location
+                  uuid = "75DDD335-DB9A-44A8-9CEB-012143B5DD2C - e40e5eff24bf669c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;__C.MKLocalSearchResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in ToddlerTown.MapSearchTest.searchNearby() -&gt; ()"
+                  moduleName = "ToddlerTown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielpitts/Desktop/ToddlerTown/ToddlerTown/Views/MapSearchTest.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "224"
+                  endingLineNumber = "224"
+                  offsetFromSymbolStart = "348">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8B6A62F2-77F9-44B1-BB6B-1D9165B32E81"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ToddlerTown/Views/MapSearchTest.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "262"
+            endingLineNumber = "262"
+            landmarkName = "searchNearby()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BD0D6EAD-9397-40B5-A137-C2C5AD136B53"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ToddlerTown/Views/MapSearchTest.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "264"
+            endingLineNumber = "264"
+            landmarkName = "searchNearby()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E1B2EBC5-B83C-4850-A9E6-1DE03FB94E87"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ToddlerTown/Views/MapSearchTest.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "279"
+            endingLineNumber = "279"
+            landmarkName = "searchNearby()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "E1B2EBC5-B83C-4850-A9E6-1DE03FB94E87 - e40e5eff24bf60ca"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;__C.MKLocalSearchResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in ToddlerTown.MapSearchTest.searchNearby() -&gt; ()"
+                  moduleName = "ToddlerTown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielpitts/Desktop/ToddlerTown/ToddlerTown/Views/MapSearchTest.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "242"
+                  endingLineNumber = "242"
+                  offsetFromSymbolStart = "1696">
+               </Location>
+               <Location
+                  uuid = "E1B2EBC5-B83C-4850-A9E6-1DE03FB94E87 - 608b2dd23f1e6d10"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (__C.MKMapItem) -&gt; ToddlerTown.MKPlaceAnnotation in closure #1 (Swift.Optional&lt;__C.MKLocalSearchResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in ToddlerTown.MapSearchTest.searchNearby() -&gt; ()"
+                  moduleName = "ToddlerTown"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/danielpitts/Desktop/ToddlerTown/ToddlerTown/Views/MapSearchTest.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "242"
+                  endingLineNumber = "242"
+                  offsetFromSymbolStart = "108">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
