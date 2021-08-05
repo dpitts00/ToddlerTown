@@ -47,6 +47,7 @@
 		DF1F39F526BBAB5B00567F9A /* Search.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Search.png; path = ToddlerTown/Assets.xcassets/Screens/Search.imageset/Search.png; sourceTree = SOURCE_ROOT; };
 		DF1F39F926BBAE4100567F9A /* Detail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Detail.png; sourceTree = "<group>"; };
 		DF1F39FB26BBAFBE00567F9A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DF1F39FD26BBB68200567F9A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DF27335826BA540D0073FEE8 /* TextOutline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextOutline.swift; sourceTree = "<group>"; };
 		DF34485C26B4534B0013466E /* TASKS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TASKS.md; sourceTree = "<group>"; };
 		DF3B141A26A403890082A11D /* MKPointAnnotationWithID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKPointAnnotationWithID.swift; sourceTree = "<group>"; };
@@ -98,20 +99,19 @@
 		DF7584FB26B1CDD3003E410A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				DF7B25EC26B8CDB400C3E02B /* GettingStartedView.swift */,
 				DF439E7A26A8791500503964 /* SearchView.swift */,
-				DF8364DD269F7B930028BFB3 /* ContentView.swift */,
-				DFE64CA026A1E14700836C4E /* EditView.swift */,
-				DF4BA39C26ADF4C80079000E /* ImagePickerView.swift */,
 				DF439E7826A7612D00503964 /* MapSearchTest.swift */,
-				DF7B25EE26B9E04000C3E02B /* PlacemarkAnnotationView.swift */,
+				DF8364DD269F7B930028BFB3 /* ContentView.swift */,
+				DFE64C98269F8E6D00836C4E /* MapView.swift */,
+				DFE64CA026A1E14700836C4E /* EditView.swift */,
 				DFE64C9A26A0027D00836C4E /* DetailView.swift */,
 				DF8155F326AB1B0300D04684 /* DetailMapView.swift */,
+				DF4BA39C26ADF4C80079000E /* ImagePickerView.swift */,
+				DF7B25EE26B9E04000C3E02B /* PlacemarkAnnotationView.swift */,
 				DF0F99E826A3E9FE003A5530 /* ActivityViewController.swift */,
-				DFE64C98269F8E6D00836C4E /* MapView.swift */,
 				DFB3FE4226AA0DB2001D92A9 /* SimpleMapView.swift */,
 				DFE64C9C26A125F700836C4E /* UserLocationIndicatorView.swift */,
-				DF7B25EC26B8CDB400C3E02B /* GettingStartedView.swift */,
-				DF1F39ED26BB298900567F9A /* MyColors.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -119,6 +119,7 @@
 		DF7584FC26B1CDF0003E410A /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				DF1F39ED26BB298900567F9A /* MyColors.swift */,
 				DF3B141A26A403890082A11D /* MKPointAnnotationWithID.swift */,
 				DF3B141C26A4DEF00082A11D /* MKPlaceAnnotation.swift */,
 				DF75850026B1CE51003E410A /* PlaceAnnotationExtension.swift */,
@@ -140,6 +141,7 @@
 		DF8364CF269F7B930028BFB3 = {
 			isa = PBXGroup;
 			children = (
+				DF1F39FD26BBB68200567F9A /* README.md */,
 				DF8364DA269F7B930028BFB3 /* ToddlerTown */,
 				DF8364D9269F7B930028BFB3 /* Products */,
 			);
