@@ -18,19 +18,19 @@ This app is for an intended audience of adults with young children, making conve
 
 1. After adding places to the map, select a category to filter Map and List views by type.
 
-![Search View](Screens/Search.png)
+![Search View](ToddlerTown/Screens/Search.png)
 
 2. Add views by searching for nearby addresses or points-of-interest, then click "+" button to add to your town.
 
-![Search View](Screens/Add.png)
+![Search View](ToddlerTown/Screens/Add.png)
 
 3. View all of your places in the Map view, or filter places by type. User location shown is simulated.
 
-![Search View](Screens/Content.png)
+![Search View](ToddlerTown/Screens/Content.png)
 
 4. View details about a place, as well as a map of the location. You can click the "Go" button to open the location in Maps for quick and easy directions.
 
-![Search View](Screens/Detail.png)
+![Search View](ToddlerTown/Screens/Detail.png)
 
 
 Future versions plan to implement features from the following:
