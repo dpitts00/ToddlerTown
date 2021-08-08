@@ -1,0 +1,14 @@
+# Privacy Policy for ToddlerTown
+
+We do not have access to any user information or data.
+We do not collect any personal data from or about our app users.
+
+## We Do Not Collect Personal Information for Any of Our Apps, including:
+ - ToddlerTown
+ - Little Journals
+
+ToddlerTown requests access to the following info:
+ - User location: A user's location is only used for searching for nearby locations and for providing directions (via Maps). A user's location is never shared with us, and we do not collect that data.
+ - User photo library: A user can upload photos from their library to ToddlerTown to display alongside other place information. We do not have access to that data, and will never collect personal data for any reason.
+
+2021 Daniel Pitts
