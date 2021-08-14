@@ -1,14 +1,12 @@
 # ToddlerTown
-## ToddlerTown app, v0.2 (beta), iOS 13.0+.
+## ToddlerTown app, v1.0, iOS 14.0+; out now on the App Store!
 Written in Swift, using SwiftUI, UIKit, CoreData, and MapKit.
 
 
 This app is for an intended audience of adults with young children, making convenient neighborhood guides with all of the toddler- and kid-centric places they enjoy! Features include adding places to maps through simple searches by region, adding notes and images to a place or marking favorites, filtering places by type (park, attraction, cafe, etc.), and getting directions quickly through the Maps app.
 
 
-### v0.2 beta notes
- - This is the first development release for this app.
- - Please look through the screens below for an overview of the features.
+### v1.0 features
  - Search View: Add new places, or filter existing places by type.
  - Add View: Add new places, searching by the map region.
  - Edit View (not shown): Edit place info, and add notes or photos.
