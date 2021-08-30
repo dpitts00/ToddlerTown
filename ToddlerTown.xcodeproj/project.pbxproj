@@ -14,6 +14,7 @@
 		DF1F39F626BBAB5B00567F9A /* Search.png in Resources */ = {isa = PBXBuildFile; fileRef = DF1F39F526BBAB5B00567F9A /* Search.png */; };
 		DF1F39FA26BBAE4100567F9A /* Detail.png in Resources */ = {isa = PBXBuildFile; fileRef = DF1F39F926BBAE4100567F9A /* Detail.png */; };
 		DF27335926BA540D0073FEE8 /* TextOutline.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF27335826BA540D0073FEE8 /* TextOutline.swift */; };
+		DF2FADC326C3208A0064B920 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF2FADC226C3208A0064B920 /* CloudKit.framework */; };
 		DF3B141B26A403890082A11D /* MKPointAnnotationWithID.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3B141A26A403890082A11D /* MKPointAnnotationWithID.swift */; };
 		DF3B141D26A4DEF00082A11D /* MKPlaceAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3B141C26A4DEF00082A11D /* MKPlaceAnnotation.swift */; };
 		DF439E7926A7612D00503964 /* MapSearchTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF439E7826A7612D00503964 /* MapSearchTest.swift */; };
@@ -30,6 +31,7 @@
 		DF8364E3269F7B940028BFB3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF8364E2269F7B940028BFB3 /* Preview Assets.xcassets */; };
 		DF8364E5269F7B940028BFB3 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8364E4269F7B940028BFB3 /* Persistence.swift */; };
 		DF8364E8269F7B940028BFB3 /* ToddlerTown.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DF8364E6269F7B940028BFB3 /* ToddlerTown.xcdatamodeld */; };
+		DF8EFD8C26DD3C2200CE637B /* MKMapItemDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8EFD8B26DD3C2200CE637B /* MKMapItemDemo.swift */; };
 		DFB3FE4326AA0DB2001D92A9 /* SimpleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3FE4226AA0DB2001D92A9 /* SimpleMapView.swift */; };
 		DFE64C99269F8E6D00836C4E /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE64C98269F8E6D00836C4E /* MapView.swift */; };
 		DFE64C9B26A0027D00836C4E /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE64C9A26A0027D00836C4E /* DetailView.swift */; };
@@ -46,6 +48,8 @@
 		DF1F39F926BBAE4100567F9A /* Detail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Detail.png; sourceTree = "<group>"; };
 		DF1F39FD26BBB68200567F9A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DF27335826BA540D0073FEE8 /* TextOutline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextOutline.swift; sourceTree = "<group>"; };
+		DF2FADC026C3206C0064B920 /* ToddlerTown.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToddlerTown.entitlements; sourceTree = "<group>"; };
+		DF2FADC226C3208A0064B920 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		DF34485C26B4534B0013466E /* TASKS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TASKS.md; sourceTree = "<group>"; };
 		DF3B141A26A403890082A11D /* MKPointAnnotationWithID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKPointAnnotationWithID.swift; sourceTree = "<group>"; };
 		DF3B141C26A4DEF00082A11D /* MKPlaceAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKPlaceAnnotation.swift; sourceTree = "<group>"; };
@@ -65,6 +69,7 @@
 		DF8364E4269F7B940028BFB3 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		DF8364E7269F7B940028BFB3 /* ToddlerTown.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToddlerTown.xcdatamodel; sourceTree = "<group>"; };
 		DF8364E9269F7B940028BFB3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DF8EFD8B26DD3C2200CE637B /* MKMapItemDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKMapItemDemo.swift; sourceTree = "<group>"; };
 		DFB3FE4226AA0DB2001D92A9 /* SimpleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMapView.swift; sourceTree = "<group>"; };
 		DFD3C08126B202410037BDB8 /* Add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Add.png; sourceTree = "<group>"; };
 		DFE64C98269F8E6D00836C4E /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
@@ -78,12 +83,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF2FADC326C3208A0064B920 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DF2FADC126C3208A0064B920 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DF2FADC226C3208A0064B920 /* CloudKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		DF7584FA26B1CDA8003E410A /* CoreData */ = {
 			isa = PBXGroup;
 			children = (
@@ -129,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				DF27335826BA540D0073FEE8 /* TextOutline.swift */,
+				DF8EFD8B26DD3C2200CE637B /* MKMapItemDemo.swift */,
 				DF0F99E626A274FF003A5530 /* ContentViewOriginal.swift */,
 			);
 			path = Prototyping;
@@ -140,6 +155,7 @@
 				DF1F39FD26BBB68200567F9A /* README.md */,
 				DF8364DA269F7B930028BFB3 /* ToddlerTown */,
 				DF8364D9269F7B930028BFB3 /* Products */,
+				DF2FADC126C3208A0064B920 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -154,6 +170,7 @@
 		DF8364DA269F7B930028BFB3 /* ToddlerTown */ = {
 			isa = PBXGroup;
 			children = (
+				DF2FADC026C3206C0064B920 /* ToddlerTown.entitlements */,
 				DF34485C26B4534B0013466E /* TASKS.md */,
 				DFD3C08026B202410037BDB8 /* Screens */,
 				DF7584FD26B1CE04003E410A /* Prototyping */,
@@ -259,6 +276,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DF8EFD8C26DD3C2200CE637B /* MKMapItemDemo.swift in Sources */,
 				DF0F99E726A274FF003A5530 /* ContentViewOriginal.swift in Sources */,
 				DFB3FE4326AA0DB2001D92A9 /* SimpleMapView.swift in Sources */,
 				DF8364E8269F7B940028BFB3 /* ToddlerTown.xcdatamodeld in Sources */,
@@ -409,7 +427,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ToddlerTown/ToddlerTown.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"ToddlerTown/Preview Content\"";
 				DEVELOPMENT_TEAM = TLM82UG665;
 				ENABLE_PREVIEWS = YES;
@@ -419,7 +439,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dp.ToddlerTown;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -432,7 +452,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = ToddlerTown/ToddlerTown.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"ToddlerTown/Preview Content\"";
 				DEVELOPMENT_TEAM = TLM82UG665;
 				ENABLE_PREVIEWS = YES;
@@ -442,7 +464,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1;
+				MARKETING_VERSION = 0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dp.ToddlerTown;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

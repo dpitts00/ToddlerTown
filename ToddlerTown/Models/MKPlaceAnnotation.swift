@@ -27,7 +27,7 @@ class MKPlaceAnnotation: NSObject, Identifiable, MKAnnotation {
     }
     
     static var example: MKPlaceAnnotation {
-        let place = MKPlaceAnnotation(id: UUID(), title: "Cherokee Park", subtitle: "Park", address: "1000 Burning Wood Way, Madison, WI 53704", coordinate: CLLocationCoordinate2D(latitude: CLLocationDegrees(43.16), longitude: CLLocationDegrees(-89.37)), type: .attraction)
+        let place = MKPlaceAnnotation(id: UUID(), title: "Olbrich Botanical Gardens", subtitle: "Park", address: "3330 Atwood Ave, Madison, WI 53704", coordinate: CLLocationCoordinate2D(latitude: CLLocationDegrees(43.092639), longitude: CLLocationDegrees(-89.335542)), type: .park)
         return place
     }
     
