@@ -15,12 +15,13 @@ struct ContentView: View {
     @Environment(\.presentationMode) private var presentationMode
     @State private var startRegion: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationManager().location?.coordinate ?? MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
     
-    @State private var annotations: [MKPlaceAnnotation] = []
+    @State private var annotations: [PlaceAnnotation] = []
     @State private var showingPlaceDetails = false
-    @State private var selectedPlace: MKPlaceAnnotation?
+    @State private var selectedPlace: PlaceAnnotation?
     @State private var userLocationShown = false
     
     @State private var userLocation: CLLocationCoordinate2D? = CLLocationManager().location?.coordinate
+    @State private var redrawMap: Bool = false
     
     let locationManager = CLLocationManager()
     
@@ -29,26 +30,24 @@ struct ContentView: View {
     
 //    let placeTypeCategories = ["All", "Attractions", "Restaurants & Cafés", "Parks & Nature", "Stores", "Libraries", "Friends & Family", "Other"]
     
-    init(type: String) {
+    init(type: PlaceType) {
         switch type {
-//        case "All":
-//            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [])
-        case "Attractions":
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "attraction"))
-        case "Restaurants & Cafés":
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "restaurant", "cafe"))
-        case "Parks & Nature":
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "park", "trail", "beach"))
-        case "Stores":
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "store"))
-        case "Libraries":
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "library"))
-        case "Friends & Family":
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "friends", "family"))
-        case "Favorites":
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "isFavorite == true"))
-        default:
+        case .all:
             fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [])
+        case .attractions:
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Attractions"))
+        case .restaurantsAndCafes:
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Restaurants & Cafés"))
+        case .parksAndNature:
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Parks & Nature"))
+        case .stores:
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Stores"))
+        case .librariesAndMuseums:
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Libraries & Museums"))
+        case .friendsAndFamily:
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Friends & Family"))
+        case .favorites:
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "isFavorite == true"))
         }
         
 //        if type == "all" {
@@ -75,10 +74,14 @@ struct ContentView: View {
             TabView {
                                 
                 ZStack {
-                    MapView(selectedPlace: $selectedPlace, showingPlaceDetails: $showingPlaceDetails, region: region, userLocationShown: $userLocationShown, userLocation: $userLocation, places: places)
+                    MapView(selectedPlace: $selectedPlace, showingPlaceDetails: $showingPlaceDetails, region: region, userLocationShown: $userLocationShown, annotations: $annotations, userLocation: $userLocation, redrawMap: $redrawMap)
+                        .onAppear {
+//                            print("map showed up again")
+                            redrawMap = true
+                        }
 
                     NavigationLink(
-                        destination: DetailView(selectedPlace: $selectedPlace),
+                        destination: DetailView(selectedPlace: $selectedPlace, redrawMap: $redrawMap),
                         isActive: $showingPlaceDetails) { EmptyView() }
                     
 //                    HStack {
@@ -101,26 +104,20 @@ struct ContentView: View {
                 List {
                     ForEach(places) { place in
                         // change DetailView below to place, not annotation
-                        NavigationLink(destination: DetailView(selectedPlace: .constant(place.returnAnnotation()))) {
+                        NavigationLink(destination: DetailView(selectedPlace: .constant(place), redrawMap: $redrawMap)) {
                             HStack {
+//                                imageForTypeFromString(place.type ?? "")
+                                PlaceType(rawValue: place.type ?? "All")?.imageForType()
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(Circle().foregroundColor(PlaceType(rawValue: place.type ?? "All")?.color() ?? .ttRed))
+
                                 VStack(alignment: .leading) {
-                                    
-//                                    if place.nickname != nil {
-//                                        Text("\(place.nickname ?? "")")
-//                                    }
-                                    
-                                    Text("\(place.title ?? "")")
+                                    Text("\(place.title ?? "Placeholder title")")
                                         .font(.headline)
                                         .lineLimit(1)
                                     
-                                    Text(place.address?.split(separator: ",")[0] ?? "")
-                                        .lineLimit(1)
-                                        .font(.subheadline)
-                                    Text(place.address?.split(separator: ",").dropFirst().joined(separator: ",").dropFirst() ?? "")
-                                        .lineLimit(1)
-                                        .font(.subheadline)
-                                    
-                                    Text("\(place.type?.capitalized ?? ""), ") + Text("\(getDistance(place: place)) mi")
+                                    Text("\(getDistance(place: place)) mi away")
                                         .font(.subheadline)
                                 }
                                 
@@ -146,12 +143,6 @@ struct ContentView: View {
                     Text("List")
                     Image(systemName: "list.bullet")
                 }
-                .onAppear {
-//                    print(annotations.count)
-//                    annotations = places.map { $0.returnAnnotation() }
-
-                } // end .onAppear
-
 
             } // end TabView
             .navigationBarBackButtonHidden(true)
@@ -181,7 +172,7 @@ struct ContentView: View {
             .onAppear {
                 
                 // trying it here
-                annotations = places.map { $0.returnAnnotation() }
+                annotations += places
 
                 withAnimation {
                     guard !places.isEmpty else { return }
@@ -224,12 +215,46 @@ struct ContentView: View {
     func getDistance(place: PlaceAnnotation) -> String {
         if getLocation() != nil && getSelectedPlaceLocation(for: place) != nil {
             let distance = (getLocation()!.distance(from: getSelectedPlaceLocation(for: place)!) / 1600)
-            let numberFormatter = NumberFormatter()
-            numberFormatter.numberStyle = .decimal
-            numberFormatter.maximumFractionDigits = 2
-            return numberFormatter.string(from: NSNumber(value: distance)) ?? "0.00"
+            if distance < 1 && distance >= 0 {
+                return "< 1"
+            }
+            let numberFormatter = NumberFormatter.shared
+            if let distance = numberFormatter.string(from: NSNumber(value: distance)) {
+                return distance
+            }
         }
-        return "0.0"
+        return "0"
+    }
+    
+    func imageForTypeFromString(_ type: String) -> Image {
+        switch type {
+        case "All":
+            return Image(systemName: "mappin")
+        case "Parks & Nature":
+            return Image(systemName: "leaf")
+        case "Stores":
+            return Image(systemName: "cart")
+        case "Restaurants & Cafés":
+            return Image("coffee.cup")
+        case "Libraries & Museums":
+            return Image(systemName: "text.book.closed")
+        case "Attractions":
+            return Image(systemName: "ticket")
+        case "Friends & Family":
+            return Image(systemName: "person")
+        case "Favorites":
+            return Image(systemName: "heart.fill")
+        default:
+            return Image(systemName: "mappin")
+        }
+    }
+    
+    func colorForType(_ string: String?) -> Color {
+        let placeTypeColors: [String: Color] = ["all": MyColors.red, "favorites": MyColors.blue, "parks": MyColors.red, "cafe": MyColors.gold, "attraction": MyColors.blueGreen, "friends": MyColors.gold, "libraries": MyColors.blueGreen, "store": MyColors.blue]
+        if let string = string {
+            return placeTypeColors[string] ?? Color.red
+        }
+        return Color.red
     }
     
     private func deletePlaces(offsets: IndexSet) {
@@ -258,6 +283,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(type: "park").environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView(type: .parksAndNature).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

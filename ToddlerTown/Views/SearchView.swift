@@ -13,9 +13,9 @@ struct SearchView: View {
     
     @State private var infoShowing = false
     
-    let placeTypes = PlaceType.allCases
-    let placeTypeCategories = ["All", "Favorites", "Attractions", "Restaurants & Cafés", "Parks & Nature", "Stores", "Libraries", "Friends & Family", "Other"]
-    let placeTypeImages = ["All": "mappin", "Favorites": "heart", "Parks & Nature": "leaf", "Restaurants & Cafés": "rectangle.roundedbottom", "Attractions": "ticket", "Friends & Family": "person", "Libraries": "text.book.closed", "Stores": "cart", "Other": "mappin"]
+//    let placeTypes = PlaceType.allCases
+//    let placeTypeCategories = ["All", "Favorites", "Attractions", "Restaurants & Cafés", "Parks & Nature", "Stores", "Libraries", "Friends & Family", "Other"]
+//    let placeTypeImages = ["All": "mappin", "Favorites": "heart", "Parks & Nature": "leaf", "Restaurants & Cafés": "rectangle.roundedbottom", "Attractions": "ticket", "Friends & Family": "person", "Libraries": "text.book.closed", "Stores": "cart", "Other": "mappin"]
 //    let placeTypeColors: [String: Color] = ["All": .pink, "Favorites": .red, "Parks & Nature": .green, "Restaurants & Cafés": .blue, "Attractions": .purple, "Friends & Family": .red, "Libraries": .orange, "Stores": .yellow, "Other": .pink]
     
     @FetchRequest(
@@ -23,9 +23,7 @@ struct SearchView: View {
         animation: .default) private var places: FetchedResults<PlaceAnnotation>
     
     var body: some View {
-        
-        let placeTypeColors: [String: Color] = ["All": MyColors.red, "Favorites": MyColors.blue, "Parks & Nature": MyColors.red, "Restaurants & Cafés": MyColors.gold, "Attractions": MyColors.blueGreen, "Friends & Family": MyColors.gold, "Libraries": MyColors.blueGreen, "Stores": MyColors.blue, "Other": MyColors.red]
-        
+                
         NavigationView {
             ScrollView {
                 VStack {
@@ -34,21 +32,16 @@ struct SearchView: View {
                         .aspectRatio(contentMode: .fit)
                         .padding(.bottom, 8)
                                         
-                    ForEach(placeTypeCategories, id: \.self) { type in
+                    ForEach(PlaceType.allCases, id: \.self) { type in
                         NavigationLink(destination: ContentView(type: type)) {
                             HStack {
-                                Text(type)
+                                Text(type.rawValue)
                                 Spacer()
-                                if type == "Restaurants & Cafés" {
-                                    Image("coffee.cup")
-                                } else {
-                                    Image(systemName: placeTypeImages[type] ?? "mappin")
-                                }
+                                type.imageForType()
                             }
                             .font(.headline)
                             .padding()
-                            .background(placeTypeColors[type] ?? .blue)
-//                            .background(MyColors.red)
+                            .background(type.color())
                             .foregroundColor(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         }
@@ -62,13 +55,13 @@ struct SearchView: View {
                     }) {
                         Image(systemName: "info.circle")
                     }
-                    .foregroundColor(MyColors.blue)
+                    .foregroundColor(.ttBlue)
                     .font(.headline)
                     .padding([.top, .trailing, .bottom])
-                    , trailing: NavigationLink(destination: MapSearchTest()) {
+                    , trailing: NavigationLink(destination: Text("Add View goes here")) {
                         Image(systemName: "plus")
                     }
-                    .foregroundColor(MyColors.blue)
+                    .foregroundColor(.ttBlue)
                     .font(.headline)
                     .padding([.leading, .top, .bottom])
     //                .background(Circle().stroke(Color.blue, lineWidth: 2))
@@ -78,16 +71,16 @@ struct SearchView: View {
                     ToolbarItem(placement: .principal) {
                         Text("ToddlerTown")
                             .fontWeight(.semibold)
-                            .foregroundColor(MyColors.blue)
+                            .foregroundColor(.ttBlue)
                             .font(.custom("Avenir Next", size: 24).lowercaseSmallCaps())
                     }
                 }
             }
             .padding(.top, 16)
             .onAppear {
-                if places.isEmpty {
-                    infoShowing = true
-                }
+//                if places.isEmpty {
+//                    infoShowing = true
+//                }
             }
             .sheet(isPresented: $infoShowing) {
                 GettingStartedView()

@@ -9,24 +9,31 @@ import SwiftUI
 import MapKit
 
 struct MapView: UIViewRepresentable {
-    @Binding var selectedPlace: MKPlaceAnnotation?
+    @Binding var selectedPlace: PlaceAnnotation?
     @Binding var showingPlaceDetails: Bool
     @Binding var region: MKCoordinateRegion
     @Binding var userLocationShown: Bool
+    @Binding var annotations: [PlaceAnnotation]
+//    @Binding var type: PlaceType
     
     // will it work?
     @Binding var userLocation: CLLocationCoordinate2D?
+    @Binding var redrawMap: Bool
     
 //    @FetchRequest(
 //        sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)],
 //        animation: .default) private var places: FetchedResults<PlaceAnnotation>
     
-    var places: FetchedResults<PlaceAnnotation>
+//    var places: FetchedResults<PlaceAnnotation>
    
+    
+//    let placeTypeCategories = ["All", "Attractions", "Restaurants & Cafés", "Parks & Nature", "Stores", "Libraries", "Friends & Family", "Other"]
+    
     func makeUIView(context: Context) -> MKMapView {
+        print("makeUIView")
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
-        let annotations = places.map { $0.returnAnnotation() }
+//        annotations += places
         mapView.addAnnotations(annotations) // changed
         mapView.region = region
         mapView.showsUserLocation = true
@@ -34,7 +41,12 @@ struct MapView: UIViewRepresentable {
     }
     
     func updateUIView(_ mapView: MKMapView, context: Context) {
-
+        if redrawMap {
+            mapView.removeAnnotations(annotations)
+            mapView.addAnnotations(annotations)
+            redrawMap = false // possibly unnecessary
+//            print("redrew the map?")
+        }
     }
     
     func makeCoordinator() -> Coordinator {
@@ -51,9 +63,13 @@ struct MapView: UIViewRepresentable {
         }
         
         // MARK: User Location
-        
+                
         func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
             getUserLocation()
+            print("mapViewDidFinishLoading")
+//            mapView.removeAnnotations(parent.annotations)
+//            mapView.addAnnotations(parent.annotations)
+            
         }
         
         func getUserLocation() {
@@ -69,10 +85,11 @@ struct MapView: UIViewRepresentable {
             }
         }
         
+        // *** REMOVE THIS
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
             // moved it here
-            mapView.removeAnnotations(mapView.annotations)
-            mapView.addAnnotations(parent.places.map { $0.returnAnnotation() })
+//            mapView.removeAnnotations(mapView.annotations)
+//            mapView.addAnnotations(parent.annotations)
             
             parent.region = mapView.region
         }
@@ -88,56 +105,36 @@ struct MapView: UIViewRepresentable {
             
             annotationView?.animatesWhenAdded = true
             
-            if let annotation = annotation as? MKPlaceAnnotation {
-                /*
+            if let annotation = annotation as? PlaceAnnotation {
                 switch annotation.type {
-                case .park, .beach, .trail:
+                case "Parks & Nature":
                     identifier = "NatureAnnotation"
-                    color = .systemGreen
+                    color = UIColor.ttBlueGreen
                     image = UIImage(systemName: "leaf")
-                case .attraction, .museum, .library:
+                case "Attractions":
                     identifier = "AttractionAnnotation"
-                    color = .systemOrange
+                    color = UIColor.ttRed
                     image = UIImage(systemName: "building")
-                case .store:
-                    identifier = "StoreAnnotation"
-                    color = .systemYellow
-                    image = UIImage(systemName: "cart")
-                case .restaurant, .cafe:
-                    identifier = "FoodAnnotation"
-                    color = .systemBlue
-                    image = UIImage(systemName: "rectangle.roundedbottom")
-                }
-                */
-                
-                switch annotation.type {
-                case .park, .beach, .trail:
-                    identifier = "NatureAnnotation"
-                    color = .systemGreen
-                    image = UIImage(systemName: "leaf")
-                case .attraction:
-                    identifier = "AttractionAnnotation"
-                    color = .systemPurple
-                    image = UIImage(systemName: "building")
-                case .library:
+                case "Libraries & Museums":
                     identifier = "LibraryAnnotation"
-                    color = .systemOrange
+                    color = UIColor.ttBlue
                     image = UIImage(systemName: "text.book.closed")
-                case .store:
+                case "Stores":
                     identifier = "StoreAnnotation"
-                    color = .systemYellow
+                    color = UIColor.ttGold
                     image = UIImage(systemName: "cart")
-                case .restaurant, .cafe:
+                case "Restaurants & Cafés":
                     identifier = "FoodAnnotation"
-                    color = .systemBlue
+                    color = UIColor.ttGold
                     image = UIImage(named: "coffee.cup")
-                case .friends, .family:
+                case "Friends & Family":
                     identifier = "PeopleAnnotation"
-                    color = .systemRed
+                    color = UIColor.ttBlueGreen
                     image = UIImage(systemName: "person")
                 default:
-                    identifier = "OtherAnnotation"
-                    color = .systemTeal
+                    identifier = "DefaultAnnotation"
+                    color = UIColor.ttRed
+                    image = UIImage(systemName: "mappin")
                 }
                 
                 if let reusedView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView {
@@ -161,7 +158,7 @@ struct MapView: UIViewRepresentable {
         // CHANGED: these last 2 functions
         
         func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-            guard let annotation = view.annotation as? MKPlaceAnnotation else { return }
+            guard let annotation = view.annotation as? PlaceAnnotation else { return }
             parent.selectedPlace = annotation
         }
         
@@ -169,18 +166,22 @@ struct MapView: UIViewRepresentable {
 //            guard let annotation = view.annotation as? MKPointAnnotation else { return }
 //            parent.selectedPlace = annotation
             parent.showingPlaceDetails = true
+//            parent.redrawMap = false
             
         }
     }
     
 }
 
+/*
 extension MapView {
     func placeForAnnotation(annotation: MKPlaceAnnotation) -> PlaceAnnotation? {
         return places.first(where: { $0.id == annotation.id })
     }
 
 }
+*/
+ 
 /*
 struct MapView_Previews: PreviewProvider {
     

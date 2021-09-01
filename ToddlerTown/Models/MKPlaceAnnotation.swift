@@ -13,21 +13,19 @@ class MKPlaceAnnotation: NSObject, Identifiable, MKAnnotation {
     var title: String?
     var subtitle: String?
 //    var nickname: String = ""
-    var address: String?
     var coordinate: CLLocationCoordinate2D
     var type: PlaceType
     
-    init(id: UUID, title: String?, subtitle: String?, address: String?, coordinate: CLLocationCoordinate2D, type: PlaceType) {
+    init(id: UUID, title: String?, subtitle: String?, coordinate: CLLocationCoordinate2D, type: PlaceType) {
         self.id = id
         self.title = title ?? ""
         self.subtitle = subtitle ?? ""
-        self.address = address ?? ""
         self.type = type
         self.coordinate = coordinate
     }
     
     static var example: MKPlaceAnnotation {
-        let place = MKPlaceAnnotation(id: UUID(), title: "Olbrich Botanical Gardens", subtitle: "Park", address: "3330 Atwood Ave, Madison, WI 53704", coordinate: CLLocationCoordinate2D(latitude: CLLocationDegrees(43.092639), longitude: CLLocationDegrees(-89.335542)), type: .park)
+        let place = MKPlaceAnnotation(id: UUID(), title: "Olbrich Botanical Gardens", subtitle: "Park", coordinate: CLLocationCoordinate2D(latitude: CLLocationDegrees(43.092639), longitude: CLLocationDegrees(-89.335542)), type: .parksAndNature)
         return place
     }
     

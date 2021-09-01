@@ -12,10 +12,17 @@ struct EditView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
     
+    
     @State private var title = ""
     @State private var type: PlaceType = .all
-//    @State private var nickname = ""
     @State private var address = ""
+    @State private var url = ""
+    @State private var phoneNumber = ""
+    @State private var street = ""
+    @State private var city = ""
+    @State private var state = ""
+    @State private var postalCode = ""
+    @State private var countryCode = ""
     @State private var notes = ""
     
     @State private var region = MKCoordinateRegion(center: CLLocationManager().location?.coordinate ?? MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
@@ -25,14 +32,14 @@ struct EditView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)],
         animation: .default) private var places: FetchedResults<PlaceAnnotation>
     
-    @Binding var selectedPlace: MKPlaceAnnotation?
+    @Binding var selectedPlace: PlaceAnnotation?
     @State private var place: PlaceAnnotation?
     
     @Binding var exitMapSearch: Bool?
     
     var fromAddressSearch = false
     
-    var selectedPlaceTypeCases: [PlaceType] = [] + PlaceType.allCases.drop(while: {$0 == .all})
+    var selectedPlaceTypeCases: [PlaceType] = [] + PlaceType.allCases.drop(while: {$0 == .all || $0 == .favorites})
     
     @State private var image: UIImage?
     @State private var images: [UIImage] = []
@@ -52,19 +59,26 @@ struct EditView: View {
          */
         
         Form {
-//            Text("Please write some info about this place!")
-            TextField("Place name", text: $title)
-                .autocapitalization(.words)
-//            TextField("Nickname", text: $nickname)
-//                .autocapitalization(.words)
-            TextField("Address", text: $address)
-                .textContentType(.fullStreetAddress)
-            // verify address with Maps location (query?), returns CLPlacemark
-            // "Unable to verify address"?
-            // maybe an Alert to notify that address exists after verifying
-            // save it as a string, with location coordinates
-            // replace location coordinates in Place with those returned from address lookup
-            // re-center the map at the location coordinates
+            Group {
+                TextField("Place name", text: $title)
+                    .autocapitalization(.words)
+//                TextField("Address", text: $address)
+//                    .textContentType(.fullStreetAddress)
+                TextField("Website", text: $url)
+                    .textContentType(.URL)
+                TextField("Phone number", text: $phoneNumber)
+                    .textContentType(.telephoneNumber)
+                TextField("Street address", text: $street)
+                    .textContentType(.fullStreetAddress)
+                TextField("City", text: $city)
+                    .textContentType(.addressCity)
+                TextField("State", text: $state)
+                    .textContentType(.addressState)
+                TextField("Postal code", text: $postalCode)
+                    .textContentType(.postalCode)
+                TextField("Country", text: $countryCode)
+                    .textContentType(.countryName)
+            }
             
             Picker("Place type", selection: $type) {
                 ForEach(selectedPlaceTypeCases, id: \.self) { type in
@@ -72,11 +86,9 @@ struct EditView: View {
                 }
             }
             .onChange(of: type, perform: { _ in
-                selectedPlace?.type = type
+                selectedPlace?.type = type.rawValue
             })
             
-//            TextField("Write a description of this place...", text: $notes)
-//                .frame(height: 300)
             ZStack(alignment: .topLeading) {
                 
                 if notes.isEmpty {
@@ -115,32 +127,47 @@ struct EditView: View {
         .onAppear {
             if let selectedPlace = selectedPlace {
                 title = selectedPlace.title ?? ""
-                address = selectedPlace.address ?? ""
-                if type == .all {
-                    type = selectedPlace.type // FIX THIS
+                
+                //
+//                if type == .all {
+//                   if let type = PlaceType(rawValue: selectedPlace.type ?? "All") {
+//                    self.type = type
+//                   }
+//                }
+                
+                if let type = PlaceType(rawValue: selectedPlace.type ?? "All") {
+                 self.type = type
                 }
                 
+                // region unused without little map here
                 region = MKCoordinateRegion(center: selectedPlace.coordinate, span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.05), longitudeDelta: CLLocationDegrees(0.05)))
              
-                if let place = places.first(where: { $0.title == title && $0.type == selectedPlace.type.rawValue && $0.latitude == selectedPlace.coordinate.latitude && $0.longitude == selectedPlace.coordinate.longitude } ) {
-                    self.place = place
-                    
-                    notes = place.notes ?? ""
-                    
-                    if let data = place.images {
-                        do {
-                            if let imageData = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: data) as? [Data] {
-                                images = imageData.compactMap( { UIImage(data: $0) } )
-                                print("Images: \(images.count)")
-                                self.images = images
-                            }
-                        } catch {
-                            print("Image data could not be retrieved or deserialized from CoreData entity. Error: \(error.localizedDescription)")
+                self.place = selectedPlace
+                address = selectedPlace.address ?? ""
+                
+                let addressComponents = address.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: ",")
+                street = selectedPlace.fullAddress?.street ?? String(addressComponents[0])
+                city = selectedPlace.fullAddress?.city ?? String(addressComponents[1])
+                state = selectedPlace.fullAddress?.state ?? String(addressComponents[2].dropLast(6).count == 2 ? addressComponents[2].dropLast(6) : addressComponents[2].dropLast(7))
+                postalCode = selectedPlace.fullAddress?.postalCode ?? String(addressComponents[2].dropFirst(4))
+                countryCode = selectedPlace.fullAddress?.country ?? "US"
+                
+                phoneNumber = selectedPlace.phoneNumber ?? ""
+                url = selectedPlace.url ?? ""
+                notes = selectedPlace.notes ?? ""
+                
+                if let data = selectedPlace.images {
+                    do {
+                        if let imageData = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: data) as? [Data] {
+                            images = imageData.compactMap( { UIImage(data: $0) } )
+                            print("Images: \(images.count)")
+                            self.images = images
                         }
+                    } catch {
+                        print("Image data could not be retrieved or deserialized from CoreData entity. Error: \(error.localizedDescription)")
                     }
-                    
-                    print(self.place?.title ?? "PlaceAnnotation.title == nil")
                 }
+                
             }
         }
         .onDisappear {
@@ -176,7 +203,6 @@ struct EditView: View {
         .navigationBarBackButtonHidden(true)
         .sheet(isPresented: $imagePickerShowing, onDismiss: updateImages) {
             ImagePickerView(image: $image)
-
         }
         
         
@@ -196,15 +222,24 @@ struct EditView: View {
             let newPlace = PlaceAnnotation(context: viewContext)
             newPlace.id = UUID()
             newPlace.title = title
-//            newPlace.nickname = nickname
-            newPlace.address = address
             newPlace.type = type.rawValue
             newPlace.notes = notes
+            newPlace.isFavorite = false
             
 //            if !images.isEmpty {
 //                let data = images[0].jpegData(compressionQuality: 0.8)
 //                newPlace.images = data
 //            }
+            
+            let newAddress = FullAddress(context: viewContext)
+            newAddress.id = UUID()
+            newAddress.street = street
+            newAddress.city = city
+            newAddress.state = state
+            newAddress.postalCode = postalCode
+            newAddress.country = countryCode
+            place?.fullAddress = newAddress
+            
             do {
                 let imageData = images.map { $0.jpegData(compressionQuality: 0.8) }
                 newPlace.images = try NSKeyedArchiver.archivedData(withRootObject: imageData, requiringSecureCoding: true)
@@ -220,9 +255,6 @@ struct EditView: View {
                 newPlace.latitude = region.center.latitude
                 newPlace.longitude = region.center.longitude
             }
-            
-            
-            newPlace.isFavorite = false
 
             do {
                 try viewContext.save()
@@ -243,11 +275,24 @@ struct EditView: View {
 //            **Need to deselect row after clicking on in List View
             place?.title = title
             place?.type = type.rawValue
-//            place?.nickname = nickname
-            place?.address = address
+            place?.url = url
+            place?.phoneNumber = phoneNumber
 //            place?.latitude = region.center.latitude
 //            place?.longitude = region.center.longitude
             place?.notes = notes
+            
+            let newAddress = FullAddress(context: viewContext)
+            
+            if let existingAddress = place?.fullAddress {
+                newAddress.id = existingAddress.id
+            }
+
+            newAddress.street = street
+            newAddress.city = city
+            newAddress.state = state
+            newAddress.postalCode = postalCode
+            newAddress.country = countryCode
+            place?.fullAddress = newAddress
             
 //            if !images.isEmpty {
 //                let data = images[0].jpegData(compressionQuality: 0.8)
@@ -275,6 +320,6 @@ struct EditView: View {
 
 struct EditView_Previews: PreviewProvider {
     static var previews: some View {
-        EditView(selectedPlace: .constant(MKPlaceAnnotation.example), exitMapSearch: .constant(false))
+        EditView(selectedPlace: .constant(PlaceAnnotation().example), exitMapSearch: .constant(false))
     }
 }

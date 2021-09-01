@@ -17,7 +17,8 @@ import LinkPresentation
 struct DetailView: View {
     @Environment(\.presentationMode) private var presentationMode
     
-    @Binding var selectedPlace: MKPlaceAnnotation?
+    @Binding var selectedPlace: PlaceAnnotation?
+    @Binding var redrawMap: Bool
     
 //    @ObservedObject var mapViewModel: MapViewModel
     
@@ -30,15 +31,22 @@ struct DetailView: View {
     @State private var userTrackingMode: MapUserTrackingMode = .none
     
     @State private var acShowing = false
+    @State private var actionSheetShowing = false
+    
     @State private var alertShowing = false
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    @State private var alertPrimaryButton = ""
+
     
     @State private var showingEditView = false
     
     var locationManager = CLLocationManager()
+    @State private var address: String = ""
     
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)],
-        animation: .default) private var places: FetchedResults<PlaceAnnotation>
+//    @FetchRequest(
+//        sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)],
+//        animation: .default) private var places: FetchedResults<PlaceAnnotation>
     
     @State private var images: [UIImage] = []
 
@@ -57,17 +65,40 @@ struct DetailView: View {
                     VStack(alignment: .leading) {
                         Text(selectedPlace?.title ?? "Unknown place")
                             .font(.headline)
-                        Text(selectedPlace?.address?.addressFormatterWithPostalCode() ?? "Unknown title")
-                            .font(.subheadline)
+//                        Text(selectedPlace?.address ?? "Unknown address")
+                        Text(address)
                         
-                        
-                        if let notes = getPlace(for: selectedPlace)?.notes {
-                            if !notes.isEmpty {
-                                Text(notes)
-                                    .padding(.vertical)
+                        if let phoneNumber = selectedPlace?.phoneNumber {
+                            Button (action: {
+                                if let phoneURL = URL(string: ("tel://\(phoneNumber)")) {
+                                    if UIApplication.shared.canOpenURL(phoneURL) {
+                                        UIApplication.shared.open(phoneURL)
+                                    }
+                                }
+                            }) {
+                                HStack {
+                                    Image(systemName: "phone.fill")
+                                    Text(phoneNumber)
+                                }
+                                .padding(1)
                             }
                         }
                         
+                        if let urlString = selectedPlace?.url,
+                           let url = URLComponents(string: urlString) {
+                            Button (action: {
+                                alertShowing = true
+                                alertTitle = "Visit this website?"
+                                alertMessage = urlString
+                                alertPrimaryButton = "Go"
+                            }) {
+                                HStack {
+                                    Image(systemName: "network")
+                                    Text(url.host ?? urlString)
+                                }
+                                .padding(1)
+                            }
+                        }
                     }
                     
                     Spacer()
@@ -85,12 +116,12 @@ struct DetailView: View {
                 
                 VStack(alignment: .center) {
                     Button(action: {
-                        alertShowing = true
+                        actionSheetShowing = true
                     }) {
                         VStack {
                             Text("Get Directions")
                                 .font(.headline)
-                            Text(userLocation != nil ? "Distance: \(getDistance()) mi" : "Distance unknown")
+                            Text(userLocation != nil ? "\(getDistance()) mi away" : "Distance unknown")
                                 .font(.subheadline)
                         }
                         .padding(12)
@@ -98,12 +129,19 @@ struct DetailView: View {
                         .background(Color.blue.opacity(1.0))
                         .foregroundColor(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 12.0))
-                        .padding(.bottom)
+                        .padding(.vertical)
                     }
                 }
                 
                 
-                VStack {
+                VStack(alignment: .leading) {
+                    if let notes = selectedPlace?.notes {
+                        if !notes.isEmpty {
+                            Text(notes)
+                                .padding(.vertical)
+                        }
+                    }
+                    
                     ForEach(images, id: \.self) { image in
                         Image(uiImage: image)
                             .resizable()
@@ -150,13 +188,25 @@ struct DetailView: View {
                 ActivityViewController(place: selectedPlace, url: returnURLForLocation())
             }
 
-            .actionSheet(isPresented: $alertShowing) {
+            .actionSheet(isPresented: $actionSheetShowing) {
                 ActionSheet(title: Text("Get Directions"), message: nil, buttons: [
-                    .default(Text("Open in Maps")) { openLocationInMaps() },
+                    .default(Text("Apple Maps")) { openLocationInMaps() },
+                    .default(Text("Google Maps")) { openLocationInMaps() },
                     .default(Text("Open as URL")) { openLocationAsURL() },
                     .cancel()
                 ])
             }
+            .alert(isPresented: $alertShowing) {
+                Alert(title: Text(alertTitle), message: Text(alertMessage),
+                      primaryButton: .default(Text(alertPrimaryButton)) {
+                        if let urlString = selectedPlace?.url,
+                           let url = URL(string: urlString) {
+                            UIApplication.shared.open(url)
+                        }
+                      },
+                      secondaryButton: .cancel())
+            }
+
     //        .navigationBarItems(trailing: NavigationLink(destination: EditView(selectedPlace: selectedPlace)) {
     //            Text("Edit")
     //        })
@@ -183,7 +233,18 @@ struct DetailView: View {
             }
 //            .navigationBarTitle(selectedPlace?.title ?? "No title given.", displayMode: .inline)
             .onAppear {
-                if let place = getPlace(for: selectedPlace) {
+                if let place = selectedPlace {
+                    
+                    if let address = place.fullAddress {
+                        let postalAddress = CNMutablePostalAddress()
+                        postalAddress.street = address.street ?? ""
+                        postalAddress.city = address.city ?? ""
+                        postalAddress.state = address.state ?? ""
+                        postalAddress.postalCode = address.postalCode ?? ""
+                        
+                        self.address = CNPostalAddressFormatter.shared.string(from: postalAddress)
+                    }
+                    
                     if let data = place.images {
                         do {
                             if let imageData = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: data) as? [Data] {
@@ -197,20 +258,23 @@ struct DetailView: View {
                     }
                 }
             }
+            .onDisappear {
+                redrawMap = false
+            }
         }
         .padding(.top)
 
     }
     
     // MARK: getPlace()
-    
+    /*
     func getPlace(for annotation: MKPlaceAnnotation?) -> PlaceAnnotation? {
         if let annotation = annotation {
             return self.places.first(where: { $0.title == annotation.title && $0.type == annotation.type.rawValue && $0.latitude == annotation.coordinate.latitude && $0.longitude == annotation.coordinate.longitude } )
         }
         return nil
     }
-    
+    */
     // MARK: getLocation()
     func getLocation() -> CLLocation? {
         return locationManager.location
@@ -223,22 +287,24 @@ struct DetailView: View {
     func getDistance() -> String {
         if getLocation() != nil && getSelectedPlaceLocation() != nil {
             let distance = (getLocation()!.distance(from: getSelectedPlaceLocation()!) / 1600)
-            let numberFormatter = NumberFormatter()
-            numberFormatter.numberStyle = .decimal
-            numberFormatter.maximumFractionDigits = 2
-            return numberFormatter.string(from: NSNumber(value: distance)) ?? "0.00"
+            if distance < 1 && distance >= 0 {
+                return "< 1"
+            }
+            let numberFormatter = NumberFormatter.shared
+            if let distance = numberFormatter.string(from: NSNumber(value: distance)) {
+                return distance
+            }
         }
-        return "0.0"
+        return "0"
     }
     
     // MARK: send URL to Maps
     func returnURLForLocation() -> URL? {
         guard let location = selectedPlace else { return nil }
         
-        if location.address != nil {
-//            print("address: \(location.address ?? "")")
-            return URL(string: "https://maps.apple.com/?daddr=\(location.address ?? "")")
-        }
+//        if location.address != nil {
+//            return URL(string: "https://maps.apple.com/?daddr=\(location.address ?? "")")
+//        }
         
 //        print("location: \(location.coordinate.latitude), \(location.coordinate.longitude)")
         return URL(string: "https://maps.apple.com/?daddr=\(location.coordinate.latitude),\(location.coordinate.longitude)")!
@@ -247,7 +313,7 @@ struct DetailView: View {
     func openLocationInMaps() {
         if let selectedPlace = selectedPlace {
             let address = CNMutablePostalAddress()
-            address.street = selectedPlace.address ?? ""
+//            address.street = selectedPlace.address ?? ""
             let placemark = MKPlacemark(coordinate: selectedPlace.coordinate, postalAddress: address)
             let mapItem = MKMapItem(placemark: placemark)
             mapItem.name = selectedPlace.title
@@ -268,6 +334,9 @@ struct DetailView_Previews: PreviewProvider {
     
     static var previews: some View {
 //        let region = MKCoordinateRegion(center: MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.25), longitudeDelta: CLLocationDegrees(0.25)))
-        DetailView(selectedPlace: .constant(MKPlaceAnnotation.example))
+        DetailView(selectedPlace: .constant(PlaceAnnotation().example), redrawMap: .constant(false))
+            .onAppear {
+                
+            }
     }
 }

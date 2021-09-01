@@ -33,7 +33,7 @@ class LinkPresentationItemSource: NSObject, UIActivityItemSource {
 struct ActivityViewController: UIViewControllerRepresentable {
 //    var metadata: LPLinkMetadata
 //    var activityItems: [Any]
-    var place: MKPlaceAnnotation?
+    var place: PlaceAnnotation?
     var url: URL?
     var applicationActivities: [UIActivity]? = nil
     
@@ -49,7 +49,7 @@ struct ActivityViewController: UIViewControllerRepresentable {
         
         
 //        let metadataItemSource = LinkPresentationItemSource(metadata: metadata)
-        let activityItems: [Any] = [place?.address ?? ""]
+        let activityItems: [Any] = [""]
         let ac = UIActivityViewController(activityItems: activityItems, applicationActivities: applicationActivities)
         
         return ac

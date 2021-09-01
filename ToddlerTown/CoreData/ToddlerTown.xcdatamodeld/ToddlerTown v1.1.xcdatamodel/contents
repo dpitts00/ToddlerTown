@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20G80" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+    <entity name="FullAddress" representedClassName="FullAddress" syncable="YES" codeGenerationType="class">
+        <attribute name="city" attributeType="String" defaultValueString=""/>
+        <attribute name="country" attributeType="String" defaultValueString=""/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="isoCountryCode" attributeType="String" defaultValueString=""/>
+        <attribute name="postalCode" attributeType="String" defaultValueString=""/>
+        <attribute name="state" attributeType="String" defaultValueString=""/>
+        <attribute name="street" attributeType="String" defaultValueString=""/>
+        <attribute name="subAdministrativeArea" attributeType="String" defaultValueString=""/>
+        <attribute name="subLocality" attributeType="String" defaultValueString=""/>
+        <relationship name="placeAnnotation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PlaceAnnotation" inverseName="fullAddress" inverseEntity="PlaceAnnotation"/>
+    </entity>
     <entity name="PlaceAnnotation" representedClassName="PlaceAnnotation" syncable="YES" codeGenerationType="class">
         <attribute name="address" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="images" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
+        <attribute name="imageURLs" optional="YES" attributeType="Transformable" valueTransformerName="" customClassName="Array&lt;String&gt;"/>
         <attribute name="isFavorite" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="notes" optional="YES" attributeType="String"/>
         <attribute name="phoneNumber" optional="YES" attributeType="String"/>
-        <attribute name="postalAddress" optional="YES" attributeType="Binary"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <relationship name="fullAddress" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="FullAddress" inverseName="placeAnnotation" inverseEntity="FullAddress"/>
         <fetchedProperty name="favorites" optional="YES">
             <fetchRequest name="fetchedPropertyFetchRequest" entity="PlaceAnnotation"/>
         </fetchedProperty>
     </entity>
     <elements>
-        <element name="PlaceAnnotation" positionX="-63" positionY="-9" width="128" height="215"/>
+        <element name="FullAddress" positionX="-63" positionY="81" width="128" height="179"/>
+        <element name="PlaceAnnotation" positionX="-63" positionY="-9" width="128" height="245"/>
     </elements>
 </model>

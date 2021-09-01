@@ -8,34 +8,58 @@
 import SwiftUI
 
 enum PlaceType: String, CaseIterable {
-    case all, park, trail, beach, store, restaurant, cafe, attraction, library, museum, friends, family, other
+    case all = "All"
+    case parksAndNature = "Parks & Nature"
+    case stores = "Stores"
+    case restaurantsAndCafes = "Restaurants & Cafés"
+    case attractions = "Attractions"
+    case librariesAndMuseums = "Libraries & Museums"
+    case friendsAndFamily = "Friends & Family"
+    case favorites = "Favorites"
     
-    func color() -> UIColor {
+    func color() -> Color {
+        switch self {
+        case .all:
+            return .ttRed
+        case .parksAndNature:
+            return .ttBlueGreen
+        case .stores:
+            return .ttGold
+        case .restaurantsAndCafes:
+            return .ttGold
+        case .librariesAndMuseums:
+            return .ttBlue
+        case .attractions:
+            return .ttRed
+        case .friendsAndFamily:
+            return .ttBlueGreen
+        case .favorites:
+            return .ttBlue
+        }
         
-        return .systemRed
     }
     
     func imageForType() -> Image {
         switch self {
         case .all:
             return Image(systemName: "mappin")
-        case .park, .beach, .trail:
+        case .parksAndNature:
             return Image(systemName: "leaf")
-        case .store:
+        case .stores:
             return Image(systemName: "cart")
-        case .restaurant:
-            return Image(systemName: "rectangle.roundedtop")
-        case .cafe:
-            return Image(systemName: "rectangle.roundedbottom")
-        case .library:
+        case .restaurantsAndCafes:
+            return Image("coffee.cup")
+        case .librariesAndMuseums:
             return Image(systemName: "text.book.closed")
-        case .museum, .attraction:
+        case .attractions:
             return Image(systemName: "ticket")
-        case .friends, .family:
+        case .friendsAndFamily:
             return Image(systemName: "person")
-        default:
-            return Image(systemName: "mappin")
+        case .favorites:
+            return Image(systemName: "heart.fill")
         }
+        
+
     }
     
 }

@@ -4,7 +4,7 @@
 //
 //  Created by Daniel Pitts on 7/20/21.
 //
-
+/*
 import SwiftUI
 import MapKit
 //import CoreLocation
@@ -120,7 +120,7 @@ struct MapSearchTest: View {
                             MapAnnotation(coordinate: annotation.coordinate) {
                                 ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
                                     Image(systemName: "mappin")
-                                        .font(selectedPlace?.address == annotation.address ? .headline : .subheadline)
+                                        .font(.headline)
                                         .padding(4)
                                         .background(
                                             PlacemarkAnnotationView(selected: selectedPlace?.address == annotation.address, size: selectedPlace?.address == annotation.address ? 36 : 30)
@@ -186,11 +186,11 @@ struct MapSearchTest: View {
                         VStack(alignment: .leading) {
                             Text(place.name ?? "Unknown place")
                                 .font(.headline)
-                                .foregroundColor(selectedPlace?.address == place.placemark.title?.addressFormatter() ? .blue : .red)
-                            Text(place.placemark.title?.addressFormatterWithPostalCode() ?? "Unknown title")
+                                .foregroundColor(.red)
+                            Text("Unknown title")
                         }
                         .onTapGesture {
-                            selectedPlace = MKPlaceAnnotation(id: UUID(), title: place.name, subtitle: "", address: place.placemark.title?.addressFormatter(), coordinate: place.placemark.coordinate, type: .all)
+                            selectedPlace = MKPlaceAnnotation(id: UUID(), title: place.name, subtitle: "", coordinate: place.placemark.coordinate, type: .all)
                             // experiment
 //                            print("selectedPlace: \(selectedPlace?.title ?? "")")
 //                            print("address: \(selectedPlace?.address ?? "")")
@@ -200,7 +200,7 @@ struct MapSearchTest: View {
                         Spacer()
                         
                         Button(action: {
-                            selectedPlace = MKPlaceAnnotation(id: UUID(), title: place.name, subtitle: "", address: place.placemark.title, coordinate: place.placemark.coordinate, type: .attraction)
+                            selectedPlace = MKPlaceAnnotation(id: UUID(), title: place.name, subtitle: "", coordinate: place.placemark.coordinate, type: .attraction)
                             
                             isEditViewShowing = true
                         }, label: {
@@ -276,7 +276,7 @@ struct MapSearchTest: View {
                 
 
                 
-                self.annotations = self.places.map({ MKPlaceAnnotation(id: UUID(), title: $0.name, subtitle: "", address: $0.placemark.title?.addressFormatter(), coordinate: $0.placemark.coordinate, type: .all) })
+                self.annotations = self.places.map({ MKPlaceAnnotation(id: UUID(), title: $0.name, subtitle: "", coordinate: $0.placemark.coordinate, type: .all) })
                 
             }
             
@@ -309,7 +309,7 @@ struct MapSearchTest: View {
                     }
                 }
                 
-                self.annotations = self.places.map({ MKPlaceAnnotation(id: UUID(), title: $0.name, subtitle: "", address: $0.placemark.title?.addressFormatter(), coordinate: $0.placemark.coordinate, type: .all) })
+                self.annotations = self.places.map({ MKPlaceAnnotation(id: UUID(), title: $0.name, subtitle: "", coordinate: $0.placemark.coordinate, type: .all) })
                 
                 self.startRegion = response.boundingRegion
             }
@@ -359,3 +359,4 @@ extension String {
         return formattedAddress
     }
 }
+*/

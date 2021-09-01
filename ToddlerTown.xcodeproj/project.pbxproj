@@ -34,10 +34,13 @@
 		DF8364E8269F7B940028BFB3 /* ToddlerTown.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DF8364E6269F7B940028BFB3 /* ToddlerTown.xcdatamodeld */; };
 		DF8EFD8C26DD3C2200CE637B /* MKMapItemDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8EFD8B26DD3C2200CE637B /* MKMapItemDemo.swift */; };
 		DFB3FE4326AA0DB2001D92A9 /* SimpleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB3FE4226AA0DB2001D92A9 /* SimpleMapView.swift */; };
+		DFB729F726DE8F4C003D0082 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB729F626DE8F4C003D0082 /* Formatters.swift */; };
 		DFE64C99269F8E6D00836C4E /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE64C98269F8E6D00836C4E /* MapView.swift */; };
 		DFE64C9B26A0027D00836C4E /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE64C9A26A0027D00836C4E /* DetailView.swift */; };
 		DFE64C9D26A125F700836C4E /* UserLocationIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE64C9C26A125F700836C4E /* UserLocationIndicatorView.swift */; };
 		DFE64CA126A1E14700836C4E /* EditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE64CA026A1E14700836C4E /* EditView.swift */; };
+		DFF6F1E626DEA34200C5D560 /* Contacts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DFF6F1E526DEA34200C5D560 /* Contacts.framework */; };
+		DFF6F1E826DF123700C5D560 /* LocationManagerSingleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF6F1E726DF123700C5D560 /* LocationManagerSingleton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,11 +77,14 @@
 		DF8364E9269F7B940028BFB3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DF8EFD8B26DD3C2200CE637B /* MKMapItemDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKMapItemDemo.swift; sourceTree = "<group>"; };
 		DFB3FE4226AA0DB2001D92A9 /* SimpleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMapView.swift; sourceTree = "<group>"; };
+		DFB729F626DE8F4C003D0082 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		DFD3C08126B202410037BDB8 /* Add.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Add.png; sourceTree = "<group>"; };
 		DFE64C98269F8E6D00836C4E /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		DFE64C9A26A0027D00836C4E /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
 		DFE64C9C26A125F700836C4E /* UserLocationIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocationIndicatorView.swift; sourceTree = "<group>"; };
 		DFE64CA026A1E14700836C4E /* EditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditView.swift; sourceTree = "<group>"; };
+		DFF6F1E526DEA34200C5D560 /* Contacts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Contacts.framework; path = System/Library/Frameworks/Contacts.framework; sourceTree = SDKROOT; };
+		DFF6F1E726DF123700C5D560 /* LocationManagerSingleton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerSingleton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DFF6F1E626DEA34200C5D560 /* Contacts.framework in Frameworks */,
 				DF2FADC326C3208A0064B920 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -96,6 +103,7 @@
 		DF2FADC126C3208A0064B920 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DFF6F1E526DEA34200C5D560 /* Contacts.framework */,
 				DF2FADC226C3208A0064B920 /* CloudKit.framework */,
 			);
 			name = Frameworks;
@@ -115,7 +123,6 @@
 			children = (
 				DF7B25EC26B8CDB400C3E02B /* GettingStartedView.swift */,
 				DF439E7A26A8791500503964 /* SearchView.swift */,
-				DF439E7826A7612D00503964 /* MapSearchTest.swift */,
 				DF8364DD269F7B930028BFB3 /* ContentView.swift */,
 				DFE64C98269F8E6D00836C4E /* MapView.swift */,
 				DFE64CA026A1E14700836C4E /* EditView.swift */,
@@ -126,6 +133,7 @@
 				DF0F99E826A3E9FE003A5530 /* ActivityViewController.swift */,
 				DFB3FE4226AA0DB2001D92A9 /* SimpleMapView.swift */,
 				DFE64C9C26A125F700836C4E /* UserLocationIndicatorView.swift */,
+				DF439E7826A7612D00503964 /* MapSearchTest.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -180,6 +188,7 @@
 				DF7584FD26B1CE04003E410A /* Prototyping */,
 				DF7584FA26B1CDA8003E410A /* CoreData */,
 				DF7584FB26B1CDD3003E410A /* Views */,
+				DFB729F526DE8F37003D0082 /* Helpers */,
 				DF7584FC26B1CDF0003E410A /* Models */,
 				DF8364DF269F7B940028BFB3 /* Assets.xcassets */,
 				DF8364E9269F7B940028BFB3 /* Info.plist */,
@@ -195,6 +204,15 @@
 				DF8364E2269F7B940028BFB3 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		DFB729F526DE8F37003D0082 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				DFB729F626DE8F4C003D0082 /* Formatters.swift */,
+				DFF6F1E726DF123700C5D560 /* LocationManagerSingleton.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		DFD3C08026B202410037BDB8 /* Screens */ = {
@@ -284,12 +302,14 @@
 				DF8EFD8C26DD3C2200CE637B /* MKMapItemDemo.swift in Sources */,
 				DF0F99E726A274FF003A5530 /* ContentViewOriginal.swift in Sources */,
 				DFB3FE4326AA0DB2001D92A9 /* SimpleMapView.swift in Sources */,
+				DFB729F726DE8F4C003D0082 /* Formatters.swift in Sources */,
 				DF8364E8269F7B940028BFB3 /* ToddlerTown.xcdatamodeld in Sources */,
 				DF3B141B26A403890082A11D /* MKPointAnnotationWithID.swift in Sources */,
 				DF4BA39D26ADF4C80079000E /* ImagePickerView.swift in Sources */,
 				DF1F39EE26BB298900567F9A /* MyColors.swift in Sources */,
 				DFE64C9B26A0027D00836C4E /* DetailView.swift in Sources */,
 				DF3B141D26A4DEF00082A11D /* MKPlaceAnnotation.swift in Sources */,
+				DFF6F1E826DF123700C5D560 /* LocationManagerSingleton.swift in Sources */,
 				DF7B25ED26B8CDB400C3E02B /* GettingStartedView.swift in Sources */,
 				DF0F99E926A3E9FF003A5530 /* ActivityViewController.swift in Sources */,
 				DF8364E5269F7B940028BFB3 /* Persistence.swift in Sources */,

@@ -5,8 +5,8 @@
 //  Created by Daniel Pitts on 7/22/21.
 //
 
-import SwiftUI
-
+/*
+ 
 import SwiftUI
 import MapKit
 
@@ -159,4 +159,6 @@ struct SimpleMapView_Previews: PreviewProvider {
         SimpleMapView()
     }
 }
+ */
+ 
  */
