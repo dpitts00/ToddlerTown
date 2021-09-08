@@ -22,7 +22,9 @@
 		DF75850126B1CE51003E410A /* PlaceAnnotationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF75850026B1CE51003E410A /* PlaceAnnotationExtension.swift */; };
 		DF7B25ED26B8CDB400C3E02B /* GettingStartedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B25EC26B8CDB400C3E02B /* GettingStartedView.swift */; };
 		DF7B25EF26B9E04000C3E02B /* PlacemarkAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF7B25EE26B9E04000C3E02B /* PlacemarkAnnotationView.swift */; };
-		DF807C0926E9405300BFA5B2 /* Views for ActivityViewController in Resources */ = {isa = PBXBuildFile; fileRef = DF807C0826E9405300BFA5B2 /* Views for ActivityViewController */; };
+		DF807C0D26E940E900BFA5B2 /* ActivityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF807C0A26E940E900BFA5B2 /* ActivityViewController.swift */; };
+		DF807C0E26E940E900BFA5B2 /* ActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF807C0B26E940E900BFA5B2 /* ActivityController.swift */; };
+		DF807C0F26E940E900BFA5B2 /* MapLinkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF807C0C26E940E900BFA5B2 /* MapLinkView.swift */; };
 		DF8155F426AB1B0300D04684 /* DetailMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8155F326AB1B0300D04684 /* DetailMapView.swift */; };
 		DF8364DC269F7B930028BFB3 /* ToddlerTownApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8364DB269F7B930028BFB3 /* ToddlerTownApp.swift */; };
 		DF8364DE269F7B930028BFB3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8364DD269F7B930028BFB3 /* ContentView.swift */; };
@@ -68,7 +70,9 @@
 		DF793F3A26DD584500E36DF9 /* ToddlerTown v1.1.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "ToddlerTown v1.1.xcdatamodel"; sourceTree = "<group>"; };
 		DF7B25EC26B8CDB400C3E02B /* GettingStartedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GettingStartedView.swift; sourceTree = "<group>"; };
 		DF7B25EE26B9E04000C3E02B /* PlacemarkAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlacemarkAnnotationView.swift; sourceTree = "<group>"; };
-		DF807C0826E9405300BFA5B2 /* Views for ActivityViewController */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Views for ActivityViewController"; sourceTree = "<group>"; };
+		DF807C0A26E940E900BFA5B2 /* ActivityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ActivityViewController.swift; path = "Views for ActivityViewController/ActivityViewController.swift"; sourceTree = "<group>"; };
+		DF807C0B26E940E900BFA5B2 /* ActivityController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ActivityController.swift; path = "Views for ActivityViewController/ActivityController.swift"; sourceTree = "<group>"; };
+		DF807C0C26E940E900BFA5B2 /* MapLinkView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MapLinkView.swift; path = "Views for ActivityViewController/MapLinkView.swift"; sourceTree = "<group>"; };
 		DF8155F326AB1B0300D04684 /* DetailMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailMapView.swift; sourceTree = "<group>"; };
 		DF8364D8269F7B930028BFB3 /* ToddlerTown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToddlerTown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF8364DB269F7B930028BFB3 /* ToddlerTownApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToddlerTownApp.swift; sourceTree = "<group>"; };
@@ -139,8 +143,10 @@
 				DF4BA39C26ADF4C80079000E /* ImagePickerView.swift */,
 				DF7B25EE26B9E04000C3E02B /* PlacemarkAnnotationView.swift */,
 				DFB3FE4226AA0DB2001D92A9 /* SimpleMapView.swift */,
-				DF807C0826E9405300BFA5B2 /* Views for ActivityViewController */,
 				DFE64C9C26A125F700836C4E /* UserLocationIndicatorView.swift */,
+				DF807C0B26E940E900BFA5B2 /* ActivityController.swift */,
+				DF807C0A26E940E900BFA5B2 /* ActivityViewController.swift */,
+				DF807C0C26E940E900BFA5B2 /* MapLinkView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -297,7 +303,6 @@
 				DFF6F1F826E7CAA900C5D560 /* Localizable.strings in Resources */,
 				DF36DA3E26DDE4900000E4E8 /* LaunchScreen.storyboard in Resources */,
 				DF8364E0269F7B940028BFB3 /* Assets.xcassets in Resources */,
-				DF807C0926E9405300BFA5B2 /* Views for ActivityViewController in Resources */,
 				DF0047F326E86AC3007DC036 /* icon1024.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -313,6 +318,7 @@
 				DFF6F1FC26E7F55600C5D560 /* ExportPlaces.swift in Sources */,
 				DF8EFD8C26DD3C2200CE637B /* MKMapItemDemo.swift in Sources */,
 				DF0F99E726A274FF003A5530 /* ContentViewOriginal.swift in Sources */,
+				DF807C0D26E940E900BFA5B2 /* ActivityViewController.swift in Sources */,
 				DFB3FE4326AA0DB2001D92A9 /* SimpleMapView.swift in Sources */,
 				DFB729F726DE8F4C003D0082 /* Formatters.swift in Sources */,
 				DF8364E8269F7B940028BFB3 /* ToddlerTown.xcdatamodeld in Sources */,
@@ -326,6 +332,7 @@
 				DF8364E5269F7B940028BFB3 /* Persistence.swift in Sources */,
 				DFF6F1F526E720AC00C5D560 /* CLLocationCoordEquatable.swift in Sources */,
 				DF0047F126E8609B007DC036 /* ListView.swift in Sources */,
+				DF807C0F26E940E900BFA5B2 /* MapLinkView.swift in Sources */,
 				DFE64C99269F8E6D00836C4E /* MapView.swift in Sources */,
 				DF75850126B1CE51003E410A /* PlaceAnnotationExtension.swift in Sources */,
 				DF8155F426AB1B0300D04684 /* DetailMapView.swift in Sources */,
@@ -336,6 +343,7 @@
 				DF27335926BA540D0073FEE8 /* TextOutline.swift in Sources */,
 				DF8364DE269F7B930028BFB3 /* ContentView.swift in Sources */,
 				DFE64C9D26A125F700836C4E /* UserLocationIndicatorView.swift in Sources */,
+				DF807C0E26E940E900BFA5B2 /* ActivityController.swift in Sources */,
 				DF8364DC269F7B930028BFB3 /* ToddlerTownApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
