@@ -11,7 +11,7 @@ import MapKit
 struct EditView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
-    
+    @GestureState private var dragOffset = CGSize.zero
     
     @State private var title = ""
     @State private var type: PlaceType = .all
@@ -33,13 +33,13 @@ struct EditView: View {
         animation: .default) private var places: FetchedResults<PlaceAnnotation>
     
     @Binding var selectedPlace: PlaceAnnotation?
-    @State private var place: PlaceAnnotation?
+    let mapItem: MKMapItem?
     
     @Binding var exitMapSearch: Bool?
     
     var fromAddressSearch = false
     
-    var selectedPlaceTypeCases: [PlaceType] = [] + PlaceType.allCases.drop(while: {$0 == .all || $0 == .favorites})
+    @State private var selectedPlaceTypeCases: [PlaceType] = []
     
     @State private var image: UIImage?
     @State private var images: [UIImage] = []
@@ -62,6 +62,7 @@ struct EditView: View {
             Group {
                 TextField("Place name", text: $title)
                     .autocapitalization(.words)
+                    .lineLimit(0)
 //                TextField("Address", text: $address)
 //                    .textContentType(.fullStreetAddress)
                 TextField("Website", text: $url)
@@ -87,6 +88,7 @@ struct EditView: View {
             }
             .onChange(of: type, perform: { _ in
                 selectedPlace?.type = type.rawValue
+                
             })
             
             ZStack(alignment: .topLeading) {
@@ -125,50 +127,50 @@ struct EditView: View {
             
         }
         .onAppear {
-            if let selectedPlace = selectedPlace {
-                title = selectedPlace.title ?? ""
+            selectedPlaceTypeCases = PlaceType.allCases
+            selectedPlaceTypeCases.removeAll(where: { $0 == .all || $0 == .favorites })
+            
+            if let mapItem = mapItem {
+                let name = mapItem.name
+                let postalAddress = mapItem.placemark.postalAddress
+//                let location = mapItem.placemark.location
+                let phoneNumber = mapItem.phoneNumber
+                let url = mapItem.url
                 
-                //
-//                if type == .all {
-//                   if let type = PlaceType(rawValue: selectedPlace.type ?? "All") {
-//                    self.type = type
-//                   }
-//                }
+                street = postalAddress?.street ?? ""
+                city = postalAddress?.city ?? ""
+                state = postalAddress?.state ?? ""
+                postalCode = postalAddress?.postalCode ?? ""
+                countryCode = postalAddress?.country ?? postalAddress?.isoCountryCode ?? ""
+//                country = postalAddress?.country ?? ""
+//                isoCountryCode = postalAddress?.isoCountryCode ?? ""
+//                subAdministrativeArea = postalAddress?.subAdministrativeArea ?? ""
+//                subLocality = postalAddress?.subLocality ?? "
                 
-                if let type = PlaceType(rawValue: selectedPlace.type ?? "All") {
-                 self.type = type
-                }
+                title = name ?? ""
+                self.phoneNumber = phoneNumber ?? ""
+                self.url = url?.absoluteString ?? ""
                 
-                // region unused without little map here
-                region = MKCoordinateRegion(center: selectedPlace.coordinate, span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.05), longitudeDelta: CLLocationDegrees(0.05)))
-             
-                self.place = selectedPlace
-                address = selectedPlace.address ?? ""
-                
-                let addressComponents = address.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: ",")
-                street = selectedPlace.fullAddress?.street ?? String(addressComponents[0])
-                city = selectedPlace.fullAddress?.city ?? String(addressComponents[1])
-                state = selectedPlace.fullAddress?.state ?? String(addressComponents[2].dropLast(6).count == 2 ? addressComponents[2].dropLast(6) : addressComponents[2].dropLast(7))
-                postalCode = selectedPlace.fullAddress?.postalCode ?? String(addressComponents[2].dropFirst(4))
-                countryCode = selectedPlace.fullAddress?.country ?? "US"
-                
-                phoneNumber = selectedPlace.phoneNumber ?? ""
-                url = selectedPlace.url ?? ""
-                notes = selectedPlace.notes ?? ""
-                
-                if let data = selectedPlace.images {
-                    do {
-                        if let imageData = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: data) as? [Data] {
-                            images = imageData.compactMap( { UIImage(data: $0) } )
-                            print("Images: \(images.count)")
-                            self.images = images
-                        }
-                    } catch {
-                        print("Image data could not be retrieved or deserialized from CoreData entity. Error: \(error.localizedDescription)")
+               if let category = mapItem.pointOfInterestCategory {
+                    switch category {
+                    case .beach, .nationalPark, .park:
+                        type = PlaceType.parksAndNature
+                    case .store:
+                        type = PlaceType.stores
+                    case .bakery, .cafe, .restaurant:
+                        type = PlaceType.restaurantsAndCafes
+                    case .library, .museum:
+                        type = PlaceType.librariesAndMuseums
+                    case .amusementPark, .aquarium, .zoo:
+                        type = PlaceType.attractions
+                    default:
+                        type = PlaceType.all
                     }
                 }
-                
+            } else {
+                loadSelectedPlace()
             }
+            
         }
         .onDisappear {
             selectedPlace?.title = title
@@ -178,7 +180,7 @@ struct EditView: View {
                 Text("Edit Place")
                     .fontWeight(.semibold)
                     .font(.custom("Avenir Next", size: 18))
-                    .foregroundColor(MyColors.blue)
+                    .foregroundColor(Color.ttBlue)
             }
         }
         .navigationBarItems(leading: Button(action: {
@@ -187,26 +189,88 @@ struct EditView: View {
             Text("Cancel")
                 .fontWeight(.semibold)
                 .font(.custom("Avenir Next", size: 18))
-                .foregroundColor(MyColors.blue)
-                .padding([.top, .trailing, .bottom])
+                .foregroundColor(Color.ttBlue)
+//                .padding([.top, .trailing, .bottom])
         }), trailing: Button(action: {
-            selectedPlace == nil || fromAddressSearch == true ? addPlace() : editPlace()
+            selectedPlace == nil ? addPlace() : editPlace()
             exitMapSearch = true // experiment
             presentationMode.wrappedValue.dismiss()
         }, label: {
             Text("Save")
                 .fontWeight(.semibold)
                 .font(.custom("Avenir Next", size: 18))
-                .foregroundColor(MyColors.blue)
+                .foregroundColor(Color.ttBlue)
                 .padding([.leading, .top, .bottom])
         }))
         .navigationBarBackButtonHidden(true)
+        .gesture(DragGesture().updating($dragOffset, body: {
+            (value, state, transaction) in
+            if (value.startLocation.x < 20 && value.translation.width > 100) {
+                self.presentationMode.wrappedValue.dismiss()
+            }
+        }))
         .sheet(isPresented: $imagePickerShowing, onDismiss: updateImages) {
             ImagePickerView(image: $image)
         }
         
         
     } // end body
+    
+    func loadSelectedPlace() {
+        if let selectedPlace = selectedPlace {
+            title = selectedPlace.title ?? ""
+            
+            if type == .all {
+               if let type = PlaceType(rawValue: selectedPlace.type ?? "All") {
+                self.type = type
+               }
+            }
+            
+//                if let type = PlaceType(rawValue: selectedPlace.type ?? "All") {
+//                    self.type = type
+//                }
+            
+            // region unused without little map here
+            /*
+            region = MKCoordinateRegion(center: selectedPlace.coordinate, span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.05), longitudeDelta: CLLocationDegrees(0.05)))
+            */
+            if let selectedAddress = selectedPlace.address {
+                if !selectedAddress.isEmpty {
+                    address = selectedAddress
+                    let addressComponents = address.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: ",")
+                    if addressComponents.count >= 3 {
+                        street = String(addressComponents[0])
+                        city = String(addressComponents[1])
+                        state = String(addressComponents[2].dropLast(6).count == 2 ? addressComponents[2].dropLast(6) : addressComponents[2].dropLast(7))
+                        postalCode = String(addressComponents[2].dropFirst(4))
+                    }
+                }
+            }
+            
+            street = selectedPlace.fullAddress?.street ?? ""
+            city = selectedPlace.fullAddress?.city ?? ""
+            state = selectedPlace.fullAddress?.state ?? ""
+            postalCode = selectedPlace.fullAddress?.postalCode ?? ""
+            countryCode = selectedPlace.fullAddress?.country ?? "US"
+            
+            phoneNumber = selectedPlace.phoneNumber ?? ""
+            url = selectedPlace.url ?? ""
+            notes = selectedPlace.notes ?? ""
+            
+            if let data = selectedPlace.images {
+                do {
+                    if let imageData = try NSKeyedUnarchiver.unarchivedObject(ofClass: NSArray.self, from: data) as? [Data] {
+                        images = imageData.compactMap( { UIImage(data: $0) } )
+                        print("Images: \(images.count)")
+                        self.images = images
+                    }
+                } catch {
+                    print("Image data could not be retrieved or deserialized from CoreData entity. Error: \(error.localizedDescription)")
+                }
+            }
+            
+        }
+    }
     
     func updateImages() {
         guard let image = image else { return }
@@ -217,6 +281,54 @@ struct EditView: View {
         images.remove(atOffsets: offsets)
     }
     
+    func toPlaceAnnotation(mapItem: MKMapItem) -> PlaceAnnotation {
+        let name = mapItem.name
+        let postalAddress = mapItem.placemark.postalAddress
+        let location = mapItem.placemark.location
+        let phoneNumber = mapItem.phoneNumber
+        let url = mapItem.url
+        
+        let fullAddress = FullAddress(context: viewContext)
+        fullAddress.id = UUID()
+        fullAddress.street = postalAddress?.street
+        fullAddress.city = postalAddress?.city
+        fullAddress.state = postalAddress?.state
+        fullAddress.postalCode = postalAddress?.postalCode
+        fullAddress.country = postalAddress?.country
+        fullAddress.isoCountryCode = postalAddress?.isoCountryCode
+        fullAddress.subAdministrativeArea = postalAddress?.subAdministrativeArea
+        fullAddress.subLocality = postalAddress?.subLocality
+        
+        let placeAnnotation = PlaceAnnotation(context: viewContext)
+        placeAnnotation.id = UUID()
+        placeAnnotation.title = name
+        placeAnnotation.fullAddress = fullAddress
+        placeAnnotation.latitude = location?.coordinate.latitude ?? 43
+        placeAnnotation.longitude = location?.coordinate.longitude ?? -89.5
+        placeAnnotation.phoneNumber = phoneNumber ?? ""
+        placeAnnotation.url = url?.absoluteString ?? ""
+        placeAnnotation.isFavorite = false
+        
+       if let category = mapItem.pointOfInterestCategory {
+            switch category {
+            case .beach, .nationalPark, .park:
+                placeAnnotation.type = PlaceType.parksAndNature.rawValue
+            case .store:
+                placeAnnotation.type = PlaceType.stores.rawValue
+            case .bakery, .cafe, .restaurant:
+                placeAnnotation.type = PlaceType.restaurantsAndCafes.rawValue
+            case .library, .museum:
+                placeAnnotation.type = PlaceType.librariesAndMuseums.rawValue
+            case .amusementPark, .aquarium, .zoo:
+                placeAnnotation.type = PlaceType.attractions.rawValue
+            default:
+                placeAnnotation.type = PlaceType.all.rawValue
+            }
+        }
+        
+        return placeAnnotation
+    }
+    
     private func addPlace() {
         withAnimation {
             let newPlace = PlaceAnnotation(context: viewContext)
@@ -225,6 +337,8 @@ struct EditView: View {
             newPlace.type = type.rawValue
             newPlace.notes = notes
             newPlace.isFavorite = false
+            newPlace.phoneNumber = mapItem?.phoneNumber ?? ""
+            newPlace.url = mapItem?.url?.absoluteString ?? ""
             
 //            if !images.isEmpty {
 //                let data = images[0].jpegData(compressionQuality: 0.8)
@@ -237,8 +351,13 @@ struct EditView: View {
             newAddress.city = city
             newAddress.state = state
             newAddress.postalCode = postalCode
-            newAddress.country = countryCode
-            place?.fullAddress = newAddress
+            newAddress.country = mapItem?.placemark.country ?? ""
+            newAddress.isoCountryCode = mapItem?.placemark.isoCountryCode ?? ""
+            newAddress.subLocality = mapItem?.placemark.subLocality ?? ""
+            newAddress.subAdministrativeArea = mapItem?.placemark.subAdministrativeArea ?? ""
+            
+            newPlace.fullAddress = newAddress
+            newAddress.placeAnnotation = newPlace
             
             do {
                 let imageData = images.map { $0.jpegData(compressionQuality: 0.8) }
@@ -248,13 +367,13 @@ struct EditView: View {
             }
             
             
-            if let selectedPlace = selectedPlace {
-                newPlace.latitude = selectedPlace.coordinate.latitude
-                newPlace.longitude = selectedPlace.coordinate.longitude
-            } else {
-                newPlace.latitude = region.center.latitude
-                newPlace.longitude = region.center.longitude
-            }
+//            if let selectedPlace = selectedPlace {
+//                newPlace.latitude = selectedPlace.coordinate.latitude
+//                newPlace.longitude = selectedPlace.coordinate.longitude
+//            } else {
+            newPlace.latitude = mapItem?.placemark.coordinate.latitude ?? 43
+            newPlace.longitude = mapItem?.placemark.coordinate.longitude ?? -89
+//            }
 
             do {
                 try viewContext.save()
@@ -268,22 +387,23 @@ struct EditView: View {
     }
     
     private func editPlace() {
+        // *** THIS MAY NEED EDITING FOR ADDRESS AND IMAGES
         withAnimation {
 //            need FetchedResults to edit? set this in .onAppear
 //            Does it work?? YES
 //            Does it crash?? NO
 //            **Need to deselect row after clicking on in List View
-            place?.title = title
-            place?.type = type.rawValue
-            place?.url = url
-            place?.phoneNumber = phoneNumber
+            selectedPlace?.title = title
+            selectedPlace?.type = type.rawValue
+            selectedPlace?.url = url
+            selectedPlace?.phoneNumber = phoneNumber
 //            place?.latitude = region.center.latitude
 //            place?.longitude = region.center.longitude
-            place?.notes = notes
+            selectedPlace?.notes = notes
             
             let newAddress = FullAddress(context: viewContext)
             
-            if let existingAddress = place?.fullAddress {
+            if let existingAddress = selectedPlace?.fullAddress {
                 newAddress.id = existingAddress.id
             }
 
@@ -292,7 +412,7 @@ struct EditView: View {
             newAddress.state = state
             newAddress.postalCode = postalCode
             newAddress.country = countryCode
-            place?.fullAddress = newAddress
+            selectedPlace?.fullAddress = newAddress
             
 //            if !images.isEmpty {
 //                let data = images[0].jpegData(compressionQuality: 0.8)
@@ -301,7 +421,7 @@ struct EditView: View {
             
             do {
                 let imageData = images.map { $0.jpegData(compressionQuality: 0.8) }
-                place?.images = try NSKeyedArchiver.archivedData(withRootObject: imageData, requiringSecureCoding: true)
+                selectedPlace?.images = try NSKeyedArchiver.archivedData(withRootObject: imageData, requiringSecureCoding: true)
             } catch {
                 print("Images not serialized. Error: \(error.localizedDescription)")
             }
@@ -320,6 +440,7 @@ struct EditView: View {
 
 struct EditView_Previews: PreviewProvider {
     static var previews: some View {
-        EditView(selectedPlace: .constant(PlaceAnnotation().example), exitMapSearch: .constant(false))
+//        EditView(selectedPlace: .constant(PlaceAnnotation().example), exitMapSearch: .constant(false))
+        EditView(selectedPlace: .constant(nil), mapItem: nil, exitMapSearch: .constant(false))
     }
 }

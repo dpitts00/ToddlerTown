@@ -6,14 +6,15 @@
 //
 
 import SwiftUI
+import MapKit
 
 enum PlaceType: String, CaseIterable {
     case all = "All"
-    case parksAndNature = "Parks & Nature"
-    case stores = "Stores"
     case restaurantsAndCafes = "Restaurants & Cafés"
-    case attractions = "Attractions"
+    case parksAndNature = "Parks & Nature"
     case librariesAndMuseums = "Libraries & Museums"
+    case attractions = "Attractions"
+    case stores = "Stores"
     case friendsAndFamily = "Friends & Family"
     case favorites = "Favorites"
     
@@ -62,4 +63,26 @@ enum PlaceType: String, CaseIterable {
 
     }
     
+}
+
+extension PlaceType {
+    func casesByCategory() -> [MKPointOfInterestCategory] {
+        switch self {
+        case .all:
+            return [.amusementPark, .aquarium, .bakery, .beach, .cafe, .library, .museum, .nationalPark, .park, .restroom, .restaurant, .store, .zoo]
+        case .parksAndNature:
+            return [.beach, .nationalPark, .park]
+        case .stores:
+            return [.store]
+        case .restaurantsAndCafes:
+            return [.bakery, .cafe, .restaurant]
+        case .librariesAndMuseums:
+            return [.library, .museum]
+        case .attractions:
+            return [.amusementPark, .aquarium, .zoo]
+        default:
+            return [.amusementPark, .aquarium, .bakery, .beach, .cafe, .library, .museum, .nationalPark, .park, .restroom, .restaurant, .store, .zoo]
+        }
+            
+    }
 }

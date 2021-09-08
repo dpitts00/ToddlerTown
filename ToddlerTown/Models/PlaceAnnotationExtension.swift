@@ -7,6 +7,7 @@
 
 //import SwiftUI
 import MapKit
+import Contacts
 
 //extension PlaceAnnotation {
 //    func returnAnnotation() -> MKPlaceAnnotation {
@@ -23,6 +24,13 @@ extension PlaceAnnotation: MKAnnotation {
     }
 }
 
+// cannot ref an internal type in a public var 
+//extension PlaceAnnotation {
+//    public var unwrappedType: PlaceType {
+//        return PlaceType(rawValue: self.type ?? "All") ?? PlaceType.all
+//    }
+//}
+
 extension PlaceAnnotation {
     public var example: PlaceAnnotation {
         let placeAnnotation = PlaceAnnotation()
@@ -35,3 +43,4 @@ extension PlaceAnnotation {
         return placeAnnotation
     }
 }
+

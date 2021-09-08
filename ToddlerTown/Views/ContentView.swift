@@ -8,12 +8,20 @@
 import SwiftUI
 import CoreData
 import MapKit
+import LinkPresentation
+
+class MapRegion: ObservableObject {
+    @Published var region =
+        MKCoordinateRegion(center: CLLocationManager.shared.location?.coordinate ?? CLLocationCoordinate2D(latitude: -43, longitude: 89), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+}
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     // only need Environment property for saving, deleting, etc.; NOT for FetchRequest
     @Environment(\.presentationMode) private var presentationMode
-    @State private var startRegion: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationManager().location?.coordinate ?? MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
+//    @State private var startRegion: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationManager().location?.coordinate ?? MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
+    
+    @ObservedObject var mapRegion = MapRegion()
     
     @State private var annotations: [PlaceAnnotation] = []
     @State private var showingPlaceDetails = false
@@ -21,8 +29,16 @@ struct ContentView: View {
     @State private var userLocationShown = false
     
     @State private var userLocation: CLLocationCoordinate2D? = CLLocationManager().location?.coordinate
-    @State private var redrawMap: Bool = false
+    @State private var redrawMap = false
+    @State private var repositionMap = false
     
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    @State private var alertShowing = false
+    @State private var indexSet: IndexSet?
+    
+    @State private var actionSheetShowing = false
+        
     let locationManager = CLLocationManager()
     
     
@@ -58,23 +74,36 @@ struct ContentView: View {
     }
     
     var places: FetchedResults<PlaceAnnotation> { fetchRequest.wrappedValue }
-        
+    
+    @State private var metadata: LPLinkMetadata?
+    
     var body: some View {
         
-        let region = Binding<MKCoordinateRegion>(
-            get: {
-                self.startRegion
-            },
-            set: {
-                self.startRegion = $0
-            }
-        )
+//        let region = Binding<MKCoordinateRegion>(
+//            get: {
+//                self.startRegion
+//            },
+//            set: {
+//                self.startRegion = $0
+//            }
+//        )
         
 //        NavigationView {
+        Group {
+                    
+            if metadata != nil {
+                ActivityViewController(metadata: metadata) {
+                    self.metadata = nil
+                }
+                .frame(width: 0, height: 0)
+            } else {
+                EmptyView()
+            }
+            
             TabView {
                                 
                 ZStack {
-                    MapView(selectedPlace: $selectedPlace, showingPlaceDetails: $showingPlaceDetails, region: region, userLocationShown: $userLocationShown, annotations: $annotations, userLocation: $userLocation, redrawMap: $redrawMap)
+                    MapView(selectedPlace: $selectedPlace, showingPlaceDetails: $showingPlaceDetails, region: $mapRegion.region, userLocationShown: $userLocationShown, annotations: $annotations, userLocation: $userLocation, redrawMap: $redrawMap, repositionMap: $repositionMap)
                         .onAppear {
 //                            print("map showed up again")
                             redrawMap = true
@@ -102,7 +131,7 @@ struct ContentView: View {
 
                 
                 List {
-                    ForEach(places) { place in
+                    ForEach(places.sorted(by: { distanceFrom(place: $0) < distanceFrom(place: $1) } )) { place in
                         // change DetailView below to place, not annotation
                         NavigationLink(destination: DetailView(selectedPlace: .constant(place), redrawMap: $redrawMap)) {
                             HStack {
@@ -115,7 +144,7 @@ struct ContentView: View {
                                 VStack(alignment: .leading) {
                                     Text("\(place.title ?? "Placeholder title")")
                                         .font(.headline)
-                                        .lineLimit(1)
+//                                        .lineLimit(0)
                                     
                                     Text("\(getDistance(place: place)) mi away")
                                         .font(.subheadline)
@@ -137,8 +166,14 @@ struct ContentView: View {
                             .padding([.bottom, .top])
                         }
                     }
-                    .onDelete(perform: deletePlaces)
+                    .onDelete { indexSet in
+                        deletePlaces(offsets: indexSet)
+                    }
                 } // end List
+                 
+                
+                // not sure if $annotations works here instead of places
+//                ListView(places: $annotations, redrawMap: $redrawMap)
                 .tabItem {
                     Text("List")
                     Image(systemName: "list.bullet")
@@ -149,60 +184,106 @@ struct ContentView: View {
             .navigationBarItems(
                 leading: Button(action: {
                     presentationMode.wrappedValue.dismiss()
-                }, label: {
+                }) {
                     Text(Image(systemName: "chevron.backward"))
                         .fontWeight(.semibold)
                         .padding([.top, .trailing, .bottom])
-                        .foregroundColor(MyColors.blue)
-                }),
-                trailing: Image(systemName: CLLocationManager().location != nil ? "location.fill" : "location.slash.fill")
-                .foregroundColor(CLLocationManager().location != nil ? MyColors.blue : .gray)
+                        .foregroundColor(Color.ttBlue)
+                }
             )
 //            .navigationBarTitle("ToddlerTown", displayMode: .inline)
+            
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("Map + List")
+                    Text("Places")
                         .fontWeight(.semibold)
-                        .foregroundColor(MyColors.blue)
+                        .foregroundColor(Color.ttBlue)
                         .font(.custom("Avenir Next", size: 18))
                 }
-            }
-
-            // does this work now?? NO.
-            .onAppear {
                 
-                // trying it here
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        if CLLocationManager.shared.location == nil {
+                            self.alertTitle = "Location Disabled"
+                            self.alertMessage = "You can enable Location Services for this app under Settings >> Privacy."
+                            alertShowing = true
+                        }
+                        if let coordinate = CLLocationManager.shared.location?.coordinate {
+                            withAnimation {
+                                self.mapRegion.region.center = coordinate
+                                repositionMap = true
+                            }
+                        }
+                    }) {
+                        Image(systemName: CLLocationManager.shared.location != nil ? "location.fill" : "location.slash.fill")
+                            .foregroundColor(CLLocationManager.shared.location != nil ? Color.ttBlue : .gray)
+                    }
+                    
+                    Button(action: {
+                        // share mapItems
+                        
+                        actionSheetShowing = true
+                    }) {
+                        Image(systemName: "square.and.arrow.up")
+                    }
+                    
+                }
+            }
+ 
+            .actionSheet(isPresented: $actionSheetShowing) {
+                ActionSheet(title: Text("Share ToddlerTown Places"), message: nil,
+                            buttons: [
+                                .default(Text("Share \(places.count) Places")) {
+                                    guard !places.isEmpty else { return }
+                                    let exporter = ExportPlaces.shared
+                                    exporter.savePlacesToDisk(places: annotations)
+                                    
+                                    MapLinkView.getMetadata(exporter.getPlacesURL().absoluteString) { result in
+                                        if self.metadata != nil {
+                                            self.metadata = nil
+                                        }
+                                        self.handleMetadataResult(result)
+                //                        shareSheetShowing = true
+                                    }
+                                },
+                                .cancel()
+                            ]
+                )
+            }
+            
+            .onAppear {
                 annotations += places
 
                 withAnimation {
-                    guard !places.isEmpty else { return }
-                    let maxLatitude = places.map( { $0.latitude } ).max() ?? 0.1
-                    let minLatitude = places.map( { $0.latitude } ).min() ?? 0
-                    let maxLongitude = places.map( { $0.longitude } ).max() ?? 0.1
-                    let minLongitude = places.map( { $0.longitude } ).min() ?? 0
-                    let latitudeDelta = maxLatitude - minLatitude
-                    let longitudeDelta = maxLongitude - minLongitude
-                    
-                    let span = MKCoordinateSpan(latitudeDelta: latitudeDelta * 3, longitudeDelta: longitudeDelta * 3)
-                    
-                    if places.count == 1 {
-                        let center = CLLocationCoordinate2D(latitude: places[0].latitude, longitude: places[0].longitude)
-                        self.startRegion = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
-                    } else {
-                        let avgLatitude = (places.map( { $0.latitude } ).reduce(0.0, +)) / Double(places.count)
-                        let avgLongitude = (places.map( { $0.longitude } ).reduce(0.0, +)) / Double(places.count)
-                        let center = CLLocationCoordinate2D(latitude: avgLatitude, longitude: avgLongitude)
-                        self.startRegion = MKCoordinateRegion(center: center, span: span)
-                    }
+                    setRegionForVisiblePlaces()
                 }
+            } // end onAppear
+            
+            .alert(isPresented: $alertShowing) {
+                Alert(title: Text(alertTitle),
+                      message: Text(alertMessage),
+                      dismissButton: .default(Text("OK")))
             }
+        }
             // on TabView now, which is supposed to be OUTSIDE the navigationView
 //        } // end NavigationView
         
     } // end body
     
+    // MARK: Metadata
+    
+    private func handleMetadataResult(_ result: Result<LPLinkMetadata, Error>) {
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let metadata): self.metadata = metadata
+            case .failure(let error): print(error.localizedDescription)
+            }
+        }
+    }
+    
     // MARK: getLocation()
     // Works????
+    
     func getLocation() -> CLLocation? {
         return locationManager.location
     }
@@ -224,6 +305,35 @@ struct ContentView: View {
             }
         }
         return "0"
+    }
+    
+    func distanceFrom(place: PlaceAnnotation) -> Double {
+        if getLocation() != nil && getSelectedPlaceLocation(for: place) != nil {
+            return (getLocation()!.distance(from: getSelectedPlaceLocation(for: place)!) / 1600)
+        }
+        return 0
+    }
+    
+    func setRegionForVisiblePlaces() {
+        guard !places.isEmpty else { return }
+        let maxLatitude = places.map( { $0.latitude } ).max() ?? 0.1
+        let minLatitude = places.map( { $0.latitude } ).min() ?? 0
+        let maxLongitude = places.map( { $0.longitude } ).max() ?? 0.1
+        let minLongitude = places.map( { $0.longitude } ).min() ?? 0
+        let latitudeDelta = maxLatitude - minLatitude
+        let longitudeDelta = maxLongitude - minLongitude
+
+        let span = MKCoordinateSpan(latitudeDelta: latitudeDelta * 3, longitudeDelta: longitudeDelta * 3)
+
+        if places.count == 1 {
+            let center = CLLocationCoordinate2D(latitude: places[0].latitude, longitude: places[0].longitude)
+            self.mapRegion.region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+        } else {
+            let avgLatitude = (places.map( { $0.latitude } ).reduce(0.0, +)) / Double(places.count)
+            let avgLongitude = (places.map( { $0.longitude } ).reduce(0.0, +)) / Double(places.count)
+            let center = CLLocationCoordinate2D(latitude: avgLatitude, longitude: avgLongitude)
+            self.mapRegion.region = MKCoordinateRegion(center: center, span: span)
+        }
     }
     
     func imageForTypeFromString(_ type: String) -> Image {
@@ -250,7 +360,7 @@ struct ContentView: View {
     }
     
     func colorForType(_ string: String?) -> Color {
-        let placeTypeColors: [String: Color] = ["all": MyColors.red, "favorites": MyColors.blue, "parks": MyColors.red, "cafe": MyColors.gold, "attraction": MyColors.blueGreen, "friends": MyColors.gold, "libraries": MyColors.blueGreen, "store": MyColors.blue]
+        let placeTypeColors: [String: Color] = ["all": Color.ttRed, "favorites": Color.ttBlue, "parks": Color.ttRed, "cafe": Color.ttGold, "attraction": Color.ttBlueGreen, "friends": Color.ttGold, "libraries": Color.ttBlueGreen, "store": Color.ttBlue]
         if let string = string {
             return placeTypeColors[string] ?? Color.red
         }
@@ -258,8 +368,10 @@ struct ContentView: View {
     }
     
     private func deletePlaces(offsets: IndexSet) {
+        
         withAnimation {
-            offsets.map { places[$0] }.forEach(viewContext.delete)
+//            offsets.map { places[$0] }.forEach(viewContext.delete)
+            offsets.map { places.sorted(by: { distanceFrom(place: $0) < distanceFrom(place: $1) } )[$0] }.forEach(viewContext.delete)
 
             do {
                 try viewContext.save()
@@ -267,9 +379,13 @@ struct ContentView: View {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                // *** THIS CRASHES after importing a .ttplaces file if nothing is edited first.
+                // *** May need special handling in viewContext.save() method
+//                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                print("Places not saved. Error: \(nsError)")
             }
         }
+        
     }
     
     func save() {

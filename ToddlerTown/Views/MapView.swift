@@ -14,11 +14,11 @@ struct MapView: UIViewRepresentable {
     @Binding var region: MKCoordinateRegion
     @Binding var userLocationShown: Bool
     @Binding var annotations: [PlaceAnnotation]
-//    @Binding var type: PlaceType
     
     // will it work?
     @Binding var userLocation: CLLocationCoordinate2D?
     @Binding var redrawMap: Bool
+    @Binding var repositionMap: Bool
     
 //    @FetchRequest(
 //        sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)],
@@ -33,8 +33,7 @@ struct MapView: UIViewRepresentable {
         print("makeUIView")
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
-//        annotations += places
-        mapView.addAnnotations(annotations) // changed
+        mapView.addAnnotations(annotations)
         mapView.region = region
         mapView.showsUserLocation = true
         return mapView
@@ -46,6 +45,11 @@ struct MapView: UIViewRepresentable {
             mapView.addAnnotations(annotations)
             redrawMap = false // possibly unnecessary
 //            print("redrew the map?")
+        }
+        
+        if repositionMap {
+            mapView.region = region
+            repositionMap = false
         }
     }
     
@@ -66,9 +70,6 @@ struct MapView: UIViewRepresentable {
                 
         func mapViewDidFinishLoadingMap(_ mapView: MKMapView) {
             getUserLocation()
-            print("mapViewDidFinishLoading")
-//            mapView.removeAnnotations(parent.annotations)
-//            mapView.addAnnotations(parent.annotations)
             
         }
         
@@ -85,11 +86,7 @@ struct MapView: UIViewRepresentable {
             }
         }
         
-        // *** REMOVE THIS
         func mapViewDidChangeVisibleRegion(_ mapView: MKMapView) {
-            // moved it here
-//            mapView.removeAnnotations(mapView.annotations)
-//            mapView.addAnnotations(parent.annotations)
             
             parent.region = mapView.region
         }
@@ -114,7 +111,7 @@ struct MapView: UIViewRepresentable {
                 case "Attractions":
                     identifier = "AttractionAnnotation"
                     color = UIColor.ttRed
-                    image = UIImage(systemName: "building")
+                    image = UIImage(systemName: "ticket")
                 case "Libraries & Museums":
                     identifier = "LibraryAnnotation"
                     color = UIColor.ttBlue

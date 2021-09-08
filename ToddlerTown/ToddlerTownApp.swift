@@ -12,14 +12,28 @@ struct ToddlerTownApp: App {
     @Environment(\.scenePhase) var scenePhase
     
     let persistenceController = PersistenceController.shared
+    
+//    @FetchRequest(
+//        sortDescriptors: [],
+//        animation: .default) private var places: FetchedResults<PlaceAnnotation>
 
     var body: some Scene {
         WindowGroup {
             SearchView()
+                .onOpenURL(perform: { url in
+                    let codablePlaces = ExportPlaces.shared.importPlaces(from: url)
+                    
+                    for place in codablePlaces {
+                        ExportPlaces.shared.convertToPlaceAnnotation(place)
+                    }
+                })
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
         .onChange(of: scenePhase) { _ in
             persistenceController.save()
         }
     }
+    
+
+    
 }

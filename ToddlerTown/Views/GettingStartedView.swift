@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GettingStartedView: View {
     @Environment(\.presentationMode) var presentationMode
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         
@@ -28,97 +29,119 @@ struct GettingStartedView: View {
                 }
             }
             .padding()
-            .background(MyColors.blue)
+            .background(Color.ttBlue)
             
             TabView {
-                ZStack {
-                    LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, MyColors.blue]), startPoint: .top, endPoint: .bottom)
-                    
-                    VStack {
-                        Text("Welcome to ") + Text("ToddlerTown").fontWeight(.bold) + Text(", a map app for keeping track of all the kid-centric places in your neighborhood! Tap ") + Text(Image(systemName: "plus")).foregroundColor(MyColors.blue).fontWeight(.bold) + Text(" to add places to your map, then view them as a map or list, filtered by place type.")
-                            .foregroundColor(.black)
+                ScrollView {
+                    ZStack {
+                        if colorScheme == .dark {
+                            LinearGradient(gradient: Gradient(colors: [Color(white: 0.125), Color(white: 0.125), Color(white: 0.125), .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        } else {
+                            LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        }
                         
-                        Image("Search")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(.bottom, 32)
-                        
-                        Spacer()
+                        VStack {
+                            Text("Welcome to ") + Text("ToddlerTown").fontWeight(.bold) + Text(", a map app for keeping track of all the kid-centric places in your neighborhood! Tap ") + Text(Image(systemName: "plus")).foregroundColor(Color.ttBlue).fontWeight(.bold) + Text(" to add places to your map, then view them as a map or list, filtered by place type.")
+                                
                             
+                            Image("Search")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .padding(.bottom, 32)
+                            
+                            Spacer()
+                                
+                        }
+                        .tabItem {
+                            Text("One")
+                        }
+                        .padding()
                     }
-                    .tabItem {
-                        Text("One")
-                    }
-                    .padding()
                 }
                 
-                ZStack {
-                    LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, MyColors.blue]), startPoint: .top, endPoint: .bottom)
-                    
-                    VStack {
-                        Text("On the ") + Text("Add Places").fontWeight(.bold) + Text(" view, you can search for new places and add them with the ") + Text(Image(systemName: "plus")).foregroundColor(MyColors.red).fontWeight(.bold) + Text(" button. Select the place type, and add photos and notes about the place. ")
-                            .foregroundColor(.black)
-
+                ScrollView {
+                    ZStack {
+                        if colorScheme == .dark {
+                            LinearGradient(gradient: Gradient(colors: [Color(white: 0.125), Color(white: 0.125), Color(white: 0.125), .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        } else {
+                            LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        }
                         
-                        Image("Add")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(.bottom, 32)
+                        VStack {
+                            Text("On the ") + Text("Add Places").fontWeight(.bold) + Text(" view, you can search for new places and add them with the ") + Text(Image(systemName: "plus")).foregroundColor(Color.ttRed).fontWeight(.bold) + Text(" button. Select the place type, and add photos and notes about the place. ")
+
                             
-                        Spacer()
+                            Image("Add")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .padding(.bottom, 32)
+                                
+                            Spacer()
+                        }
+                        .tabItem {
+                            Text("Two")
+                        }
+                        .padding()
                     }
-                    .tabItem {
-                        Text("Two")
-                    }
-                    .padding()
-                }
-
-                
-                ZStack {
-                    LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, MyColors.blue]), startPoint: .top, endPoint: .bottom)
-                    
-                    VStack {
-                        Text("View all of your places as a map or list, and filter by place type. You can mark your favorites in the list view. ") + Text("User location shown below is simulated.").italic()
-                            .foregroundColor(.black)
-
-
-                        Image("Content")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(.bottom, 32)
-                            
-                        Spacer()
-                    }
-                    .tabItem {
-                        Text("Three")
-                    }
-                    .padding()
                 }
 
                 
-                ZStack {
-                    LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, MyColors.blue]), startPoint: .top, endPoint: .bottom)
-                    
-                    VStack {
-                        Text("View details for a place, get directions, or share the location with others and make plans for the day. Enjoy your ToddlerTown!")
-                            .foregroundColor(.black)
-
+                ScrollView {
+                    ZStack {
+                        if colorScheme == .dark {
+                            LinearGradient(gradient: Gradient(colors: [Color(white: 0.125), Color(white: 0.125), Color(white: 0.125), .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        } else {
+                            LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        }
                         
-                        Image("Detail")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .padding(.bottom, 32)
+                        VStack {
+                            Text("View all of your places as a map or list, and filter by place type. You can mark your favorites in the list view. ") + Text("User location shown below is simulated.").italic()
+
+
+                            Image("Content")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .padding(.bottom, 32)
+                                
+                            Spacer()
+                        }
+                        .tabItem {
+                            Text("Three")
+                        }
+                        .padding()
+                    }
+                }
+
+                
+                ScrollView {
+                    ZStack {
+                        if colorScheme == .dark {
+                            LinearGradient(gradient: Gradient(colors: [Color(white: 0.125), Color(white: 0.125), Color(white: 0.125), .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        } else {
+                            LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        }
+                        
+                        VStack {
+                            Text("View details for a place, get directions, or share the location with others and make plans for the day. Enjoy your ToddlerTown!", comment: "Explanation of page showing place details")
+
                             
-                        Spacer()
+                            Image("Detail")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .padding(.bottom, 32)
+                                
+                            Spacer()
+                        }
+                        .tabItem {
+                            Text("Four")
+                        }
+                        .padding()
                     }
-                    .tabItem {
-                        Text("Four")
-                    }
-                    .padding()
                 }
                 
             }
             .tabViewStyle(PageTabViewStyle())
+                
         }
     }
 }

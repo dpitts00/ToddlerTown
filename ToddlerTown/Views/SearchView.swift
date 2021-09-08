@@ -58,13 +58,12 @@ struct SearchView: View {
                     .foregroundColor(.ttBlue)
                     .font(.headline)
                     .padding([.top, .trailing, .bottom])
-                    , trailing: NavigationLink(destination: Text("Add View goes here")) {
+                    , trailing: NavigationLink(destination: AddPlaceView()) {
                         Image(systemName: "plus")
                     }
                     .foregroundColor(.ttBlue)
                     .font(.headline)
                     .padding([.leading, .top, .bottom])
-    //                .background(Circle().stroke(Color.blue, lineWidth: 2))
                 )
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -72,20 +71,24 @@ struct SearchView: View {
                         Text("ToddlerTown")
                             .fontWeight(.semibold)
                             .foregroundColor(.ttBlue)
+                            // this is canceled out then...
                             .font(.custom("Avenir Next", size: 24).lowercaseSmallCaps())
                     }
                 }
             }
             .padding(.top, 16)
             .onAppear {
-//                if places.isEmpty {
-//                    infoShowing = true
-//                }
+                let defaults = UserDefaults.standard
+                if defaults.object(forKey: "returningUser") == nil {
+                    defaults.setValue("true", forKey: "returningUser")
+                    infoShowing = true
+                }
             }
             .sheet(isPresented: $infoShowing) {
                 GettingStartedView()
             }
-        }
+        } // for NavView
+        .accentColor(.ttBlue)
         
     }
 }

@@ -16,6 +16,7 @@ import LinkPresentation
 
 struct DetailView: View {
     @Environment(\.presentationMode) private var presentationMode
+    @GestureState private var dragOffset = CGSize.zero
     
     @Binding var selectedPlace: PlaceAnnotation?
     @Binding var redrawMap: Bool
@@ -30,7 +31,6 @@ struct DetailView: View {
     
     @State private var userTrackingMode: MapUserTrackingMode = .none
     
-    @State private var acShowing = false
     @State private var actionSheetShowing = false
     
     @State private var alertShowing = false
@@ -42,13 +42,17 @@ struct DetailView: View {
     @State private var showingEditView = false
     
     var locationManager = CLLocationManager()
-    @State private var address: String = ""
+    @State private var address = CNMutablePostalAddress()
     
 //    @FetchRequest(
 //        sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)],
 //        animation: .default) private var places: FetchedResults<PlaceAnnotation>
     
     @State private var images: [UIImage] = []
+    
+    // for ActivityViewController
+    @State private var metadata: LPLinkMetadata?
+    @State private var shareSheetShowing = false
 
     var body: some View {
 
@@ -57,18 +61,27 @@ struct DetailView: View {
         return ScrollView {
             VStack(alignment: .leading) {
                 
+                if metadata != nil {
+                    ActivityViewController(metadata: metadata) {
+                        self.metadata = nil
+                    }
+                    .frame(width: 0, height: 0)
+                } else {
+                    EmptyView()
+                }
+                
                 NavigationLink(
-                    destination: EditView(selectedPlace: $selectedPlace, exitMapSearch: .constant(false)),
+                    destination: EditView(selectedPlace: $selectedPlace, mapItem: nil, exitMapSearch: .constant(false)),
                     isActive: $showingEditView) { EmptyView() }
                 
                 HStack(alignment: .top) {
                     VStack(alignment: .leading) {
                         Text(selectedPlace?.title ?? "Unknown place")
                             .font(.headline)
-//                        Text(selectedPlace?.address ?? "Unknown address")
-                        Text(address)
+                        Text(CNPostalAddressFormatter.shared.string(from: address))
                         
-                        if let phoneNumber = selectedPlace?.phoneNumber {
+                        if let phoneNumber = selectedPlace?.phoneNumber,
+                           !phoneNumber.isEmpty {
                             Button (action: {
                                 if let phoneURL = URL(string: ("tel://\(phoneNumber)")) {
                                     if UIApplication.shared.canOpenURL(phoneURL) {
@@ -85,6 +98,7 @@ struct DetailView: View {
                         }
                         
                         if let urlString = selectedPlace?.url,
+                           !urlString.isEmpty,
                            let url = URLComponents(string: urlString) {
                             Button (action: {
                                 alertShowing = true
@@ -105,7 +119,19 @@ struct DetailView: View {
                     
                     VStack {
                         Button(action: {
-                            acShowing = true
+                            let name = selectedPlace?.title ?? ""
+                            let address = selectedPlace?.address ?? ""
+                            let urlString = "https://maps.apple.com/?address=\(name),\(address)"
+                            let urlStringFormatted = urlString.split(separator: " ").joined(separator: "+").replacingOccurrences(of: "+", with: "%20").replacingOccurrences(of: ",", with: "%2C")
+                            
+                            // metadata being added here
+                            MapLinkView.getMetadata(urlStringFormatted) { result in
+                                if self.metadata != nil {
+                                    self.metadata = nil
+                                }
+                                self.handleMetadataResult(result)
+        //                        shareSheetShowing = true
+                            }
                         }, label: {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.title)
@@ -133,7 +159,6 @@ struct DetailView: View {
                     }
                 }
                 
-                
                 VStack(alignment: .leading) {
                     if let notes = selectedPlace?.notes {
                         if !notes.isEmpty {
@@ -148,51 +173,42 @@ struct DetailView: View {
                             .aspectRatio(contentMode: .fit)
                             .cornerRadius(12.0)
                     }
-                    /*
-                    ZStack {
-                        DetailMapView(startRegion: $region, selectedPlace: selectedPlace)
-                        
-                        HStack {
-                            Spacer()
-                            VStack {
-                                Spacer()
-                                // or a Button() for default animation, etc.
-                                Button(action: {
-                                    alertShowing = true
-                                }) {
-                                    VStack {
-                                        Image(systemName: "arrowshape.turn.up.right.fill")
-                                        Text("Go")
-                                    }
-                                    .font(.title3)
-                                    .padding()
-                                    .background(Color.blue.opacity(1.0))
-                                    .foregroundColor(.white)
-                                    .clipShape(Circle())
-                                }
-                            }
-                        }
-                        .padding([.bottom, .trailing])
-                    } // end ZStack
-                    .frame(height: 300)
-                    .cornerRadius(12.0)
-                    */
                 } // end VStack
             } // end VStack
-    //        .padding(8)
-    //        .background(RoundedRectangle(cornerRadius: 12.0, style: .continuous)
-    //                        .fill(Color(red: 1.0, green: 0.96, blue: 0.94))
-    //        )
             .padding([.bottom, .leading, .trailing])
-            .popover(isPresented: $acShowing, attachmentAnchor: PopoverAttachmentAnchor.point(.center), arrowEdge: Edge.top) {
-                ActivityViewController(place: selectedPlace, url: returnURLForLocation())
-            }
 
             .actionSheet(isPresented: $actionSheetShowing) {
                 ActionSheet(title: Text("Get Directions"), message: nil, buttons: [
-                    .default(Text("Apple Maps")) { openLocationInMaps() },
-                    .default(Text("Google Maps")) { openLocationInMaps() },
-                    .default(Text("Open as URL")) { openLocationAsURL() },
+                    .default(Text("Apple Maps")) {
+                        // open in Apple Maps
+                        if let coordinate = selectedPlace?.coordinate {
+                            let placemark = MKPlacemark(coordinate: coordinate, postalAddress: self.address)
+                            let mapItem = MKMapItem(placemark: placemark)
+                            mapItem.name = selectedPlace?.title ?? ""
+                            mapItem.openInMaps(launchOptions: nil)
+                        }
+                    },
+                    .default(Text("Google Maps")) {
+                        // open in Google Maps
+                        let name = selectedPlace?.title ?? ""
+                        let address = selectedPlace?.address ?? ""
+                        var urlString = "https://www.google.com/maps/search/?api=1&query=\(name),\(address)"
+                        urlString = urlString.replacingOccurrences(of: " ", with: "%20").replacingOccurrences(of: ",", with: "&2C")
+                        print(urlString)
+                        if let url = URL(string: urlString) {
+                            UIApplication.shared.open(url)
+                        }
+                    },
+//                    .default(Text("Open as URL")) {
+//                        // open as URL (Apple Maps)
+//                        let name = selectedPlace?.title ?? ""
+//                        let address = selectedPlace?.address ?? ""
+//                        let urlString = "https://maps.apple.com/?address=\(name),\(address)"
+//                        let urlStringFormatted = urlString.split(separator: " ").joined(separator: "+").replacingOccurrences(of: "+", with: "%20").replacingOccurrences(of: ",", with: "%2C")
+//                        if let url = URL(string: urlStringFormatted) {
+//                            UIApplication.shared.open(url)
+//                        }
+//                    },
                     .cancel()
                 ])
             }
@@ -217,32 +233,39 @@ struct DetailView: View {
                 Text(Image(systemName: "chevron.backward"))
                     .fontWeight(.semibold)
                     .padding([.top, .trailing, .bottom])
-                    .foregroundColor(MyColors.blue)
+                    .foregroundColor(Color.ttBlue)
             }), trailing: Button(action: { showingEditView = true }) {
                 Text("Edit")
-                    .foregroundColor(MyColors.blue)
+                    .foregroundColor(Color.ttBlue)
                     .padding()
             })
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text(selectedPlace?.title ?? "No title given.")
-                        .fontWeight(.semibold)
-                        .foregroundColor(MyColors.blue)
+//                    selectedPlace?.title ?? 
+                    Text("Place Info")
                         .font(.custom("Avenir Next", size: 18))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color.ttBlue)
+                        
+                        
                 }
             }
+            
 //            .navigationBarTitle(selectedPlace?.title ?? "No title given.", displayMode: .inline)
             .onAppear {
                 if let place = selectedPlace {
                     
-                    if let address = place.fullAddress {
-                        let postalAddress = CNMutablePostalAddress()
-                        postalAddress.street = address.street ?? ""
-                        postalAddress.city = address.city ?? ""
-                        postalAddress.state = address.state ?? ""
-                        postalAddress.postalCode = address.postalCode ?? ""
-                        
-                        self.address = CNPostalAddressFormatter.shared.string(from: postalAddress)
+                    if let address = selectedPlace?.fullAddress {
+                        let newAddress = CNMutablePostalAddress()
+                        newAddress.street = address.street ?? ""
+                        newAddress.subLocality = address.subLocality ?? ""
+                        newAddress.city = address.city ?? ""
+                        newAddress.subAdministrativeArea = address.subAdministrativeArea ?? ""
+                        newAddress.state = address.state ?? ""
+                        newAddress.postalCode = address.postalCode ?? ""
+                        newAddress.country = address.country ?? ""
+                        newAddress.isoCountryCode = address.isoCountryCode ?? ""
+                        self.address = newAddress
                     }
                     
                     if let data = place.images {
@@ -263,6 +286,12 @@ struct DetailView: View {
             }
         }
         .padding(.top)
+        .gesture(DragGesture().updating($dragOffset, body: {
+            (value, state, transaction) in
+            if (value.startLocation.x < 20 && value.translation.width > 100) {
+                self.presentationMode.wrappedValue.dismiss()
+            }
+        }))
 
     }
     
@@ -275,6 +304,17 @@ struct DetailView: View {
         return nil
     }
     */
+    // MARK: Metadata
+    
+    private func handleMetadataResult(_ result: Result<LPLinkMetadata, Error>) {
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let metadata): self.metadata = metadata
+            case .failure(let error): print(error.localizedDescription)
+            }
+        }
+    }
+    
     // MARK: getLocation()
     func getLocation() -> CLLocation? {
         return locationManager.location
@@ -309,7 +349,7 @@ struct DetailView: View {
 //        print("location: \(location.coordinate.latitude), \(location.coordinate.longitude)")
         return URL(string: "https://maps.apple.com/?daddr=\(location.coordinate.latitude),\(location.coordinate.longitude)")!
     }
-    
+/*
     func openLocationInMaps() {
         if let selectedPlace = selectedPlace {
             let address = CNMutablePostalAddress()
@@ -320,7 +360,7 @@ struct DetailView: View {
             mapItem.openInMaps()
         }
     }
-    
+
     func openLocationAsURL() {
         if let mapsURL = returnURLForLocation() {
 //            if UIApplication.shared.canOpenURL(mapsURL) {
@@ -328,6 +368,7 @@ struct DetailView: View {
 //            }
         }
     }
+*/
 }
 
 struct DetailView_Previews: PreviewProvider {
