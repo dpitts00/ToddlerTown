@@ -95,14 +95,14 @@ struct GettingStartedView: View {
                         }
                         
                         VStack {
-                            Text("View all of your places as a map or list, and filter by place type. You can mark your favorites in the list view. ") + Text("User location shown below is simulated.").italic()
+                            Text("View all of your places on a map or a list. Center on your location (if enabled), or share your places. ") + Text("User location shown below is simulated.").italic()
 
 
-                            Image("Content")
+                            Image("Map")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .padding(.bottom, 32)
-                                
+                            
                             Spacer()
                         }
                         .tabItem {
@@ -111,7 +111,57 @@ struct GettingStartedView: View {
                         .padding()
                     }
                 }
+                
+                ScrollView {
+                    ZStack {
+                        if colorScheme == .dark {
+                            LinearGradient(gradient: Gradient(colors: [Color(white: 0.125), Color(white: 0.125), Color(white: 0.125), .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        } else {
+                            LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        }
+                        
+                        VStack {
+                            Text("View all of your places on a map or a list. You can mark your favorites on the list view. ") + Text("Distance is calculated from a simulated user location.").italic()
 
+
+                            Image("List")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .padding(.bottom, 32)
+                                
+                            Spacer()
+                        }
+                        .tabItem {
+                            Text("Four")
+                        }
+                        .padding()
+                    }
+                }
+                
+                ScrollView {
+                    ZStack {
+                        if colorScheme == .dark {
+                            LinearGradient(gradient: Gradient(colors: [Color(white: 0.125), Color(white: 0.125), Color(white: 0.125), .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        } else {
+                            LinearGradient(gradient: Gradient(colors: [Color.white, Color.white, Color.white, .ttBlue]), startPoint: .top, endPoint: .bottom)
+                        }
+                        
+                        VStack {
+                            Text("Share your ToddlerTown places with friends and family! You can export all of your places as a \"ToddlerTown Places\" file, and share them via text, email, or AirDrop.")
+                            
+                            Image("Share")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .padding(.bottom, 32)
+                                
+                            Spacer()
+                        }
+                        .tabItem {
+                            Text("Five")
+                        }
+                        .padding()
+                    }
+                }
                 
                 ScrollView {
                     ZStack {
@@ -133,7 +183,7 @@ struct GettingStartedView: View {
                             Spacer()
                         }
                         .tabItem {
-                            Text("Four")
+                            Text("Six")
                         }
                         .padding()
                     }
