@@ -16,6 +16,21 @@ This app is for an intended audience of adults with young children, making conve
  - Sharing: Share your places with friends and family!
  - Dark mode available!
 
+## New/updated for v1.1
+ - Full dark mode support and improved UI
+ - Can share maps with friends and family -- export full maps via email/text/AirDrop as .ttplaces files
+ - Can share exported files with ToddlerTown app for auto-import 
+ - Added directions via Google Maps
+ - Added rich link support when sharing an address
+ - Improved performance (removed "sort by distance" from List view)
+ - Added "Add Places" button to Map view also for ease-of-use
+ - Added functionality to Location icon on Map view -- now centers map when location is authorized
+ - Changed clustering for Map annotations -- now all place types cluster for correct numbering
+ - Recategorized place types for simpler grouping
+ - Added additional info to place details -- full address, phone number, and URL
+ - Improved Edit Place screen, including collapsible address fields
+ - On Add Places screen, searching by category happens automatically when a new category is selected
+
 1. After adding places to the map, select a category to filter Map and List views by type.
 
 ![Search View](ToddlerTown/Screens/Search-300.png)
