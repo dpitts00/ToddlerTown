@@ -35,12 +35,13 @@ struct AddPlaceView: View {
     @Environment(\.presentationMode) private var presentationMode
     @GestureState private var dragOffset = CGSize.zero
     
-    @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: CLLocationDegrees(43), longitude: CLLocationDegrees(-89)), span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
+//    @State private var region = MKCoordinateRegion(center: CLLocationManager.shared.location?.coordinate ?? CLLocationCoordinate2D(latitude: 43.074701, longitude: -89.384119), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+    @StateObject var mapRegion = MapRegion()
     
     @StateObject var mapItems = MapItems()
     @State private var mapSearchType = ""
     @State private var mapSearch = ""
-    @State private var selectedType = PlaceType.all
+    @State private var selectedType = PlaceType.favorites
     
     @State private var pickerPlaceTypes: [PlaceType] = []
     
@@ -59,7 +60,7 @@ struct AddPlaceView: View {
     var body: some View {
         
         NavigationLink(
-            destination: EditView(selectedPlace: .constant(nil), mapItem: mapItems.selectedItem, exitMapSearch: .constant(false)),
+            destination: EditView(selectedPlace: .constant(nil), mapItem: mapItems.selectedItem, exitMapSearch: .constant(false), showingDetailView: .constant(false)),
             isActive: $isEditViewShowing) { EmptyView() }
         
         
@@ -68,7 +69,7 @@ struct AddPlaceView: View {
             VStack {
                 
 //                ZStack {
-                    Map(coordinateRegion: $region, annotationItems: mapItems.mapItems) { annotation in
+                Map(coordinateRegion: $mapRegion.region, annotationItems: mapItems.mapItems) { annotation in
                         MapAnnotation(coordinate: annotation.placemark.coordinate) {
         //                    VStack {
                                 ZStack {
@@ -333,7 +334,7 @@ struct AddPlaceView: View {
 //            startMapSearch(search: search)
 
         case "byType":
-            let searchRequest = MKLocalPointsOfInterestRequest(coordinateRegion: self.region)
+            let searchRequest = MKLocalPointsOfInterestRequest(coordinateRegion: mapRegion.region)
             searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: selectedType.casesByCategory())
             print(searchRequest.region)
 
@@ -343,7 +344,7 @@ struct AddPlaceView: View {
 
         default:
             let searchRequest = MKLocalSearch.Request()
-            searchRequest.region = self.region
+            searchRequest.region = mapRegion.region
             print(searchRequest.region)
             searchRequest.naturalLanguageQuery = mapSearch
             let search = MKLocalSearch(request: searchRequest)
@@ -365,10 +366,14 @@ struct AddPlaceView: View {
                 return
             }
             
-            self.mapItems.mapItems = response.mapItems
+            
             withAnimation {
+                mapItems.mapItems = response.mapItems
+                assert(mapItems.mapItems == response.mapItems, "Map Items are not equal.")
                 if response.mapItems.count >= 2 {
-                    self.region = response.boundingRegion
+                    mapRegion.region = response.boundingRegion
+                } else if response.mapItems.count == 1 {
+                    mapRegion.region.center = response.mapItems[0].placemark.coordinate
                 }
 
             }

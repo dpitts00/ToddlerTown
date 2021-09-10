@@ -16,6 +16,7 @@ import LinkPresentation
 
 struct DetailView: View {
     @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.managedObjectContext) private var viewContext
     @GestureState private var dragOffset = CGSize.zero
     
     @Binding var selectedPlace: PlaceAnnotation?
@@ -27,7 +28,7 @@ struct DetailView: View {
 //        self.mapViewModel = mapViewModel
 //    }
     
-    @State private var region: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationManager().location?.coordinate ?? MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.25, longitudeDelta: 0.25))
+    @State private var region: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationManager.shared.location?.coordinate ?? MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.25, longitudeDelta: 0.25))
     
     @State private var userTrackingMode: MapUserTrackingMode = .none
     
@@ -41,7 +42,7 @@ struct DetailView: View {
     
     @State private var showingEditView = false
     
-    var locationManager = CLLocationManager()
+    var locationManager = CLLocationManager.shared
     @State private var address = CNMutablePostalAddress()
     
 //    @FetchRequest(
@@ -53,6 +54,8 @@ struct DetailView: View {
     // for ActivityViewController
     @State private var metadata: LPLinkMetadata?
     @State private var shareSheetShowing = false
+    
+    @Binding var showingDetailView: Bool
 
     var body: some View {
 
@@ -71,13 +74,14 @@ struct DetailView: View {
                 }
                 
                 NavigationLink(
-                    destination: EditView(selectedPlace: $selectedPlace, mapItem: nil, exitMapSearch: .constant(false)),
+                    destination: EditView(selectedPlace: $selectedPlace, mapItem: nil, exitMapSearch: .constant(false), showingDetailView: $showingDetailView),
                     isActive: $showingEditView) { EmptyView() }
                 
                 HStack(alignment: .top) {
                     VStack(alignment: .leading) {
                         Text(selectedPlace?.title ?? "Unknown place")
                             .font(.headline)
+                        
                         Text(CNPostalAddressFormatter.shared.string(from: address))
                         
                         if let phoneNumber = selectedPlace?.phoneNumber,
@@ -253,9 +257,34 @@ struct DetailView: View {
             
 //            .navigationBarTitle(selectedPlace?.title ?? "No title given.", displayMode: .inline)
             .onAppear {
+                
+                if !showingDetailView {
+                    presentationMode.wrappedValue.dismiss()
+                }
+                
                 if let place = selectedPlace {
                     
-                    if let address = selectedPlace?.fullAddress {
+                    // this updates the type from v1.0 -> 1.1
+                    switch place.type {
+                    case "store":
+                        selectedPlace?.type = "Stores"
+                    case "beach", "park", "trail":
+                        selectedPlace?.type = "Parks & Nature"
+                    case "attraction":
+                        selectedPlace?.type = "Attractions"
+                    case "restaurant", "cafe":
+                        selectedPlace?.type = "Restaurants & Cafés"
+                    case "library", "museum":
+                        selectedPlace?.type = "Libraries & Museums"
+                    case "friends", "family":
+                        selectedPlace?.type = "Friends & Family"
+                    default:
+                        print("don't change the type")
+                    }
+                    
+                    // this pulls out the address for Sharing
+                    if let address = place.fullAddress {
+                        
                         let newAddress = CNMutablePostalAddress()
                         newAddress.street = address.street ?? ""
                         newAddress.subLocality = address.subLocality ?? ""
@@ -266,7 +295,23 @@ struct DetailView: View {
                         newAddress.country = address.country ?? ""
                         newAddress.isoCountryCode = address.isoCountryCode ?? ""
                         self.address = newAddress
+                    } else {
+                        // this pulls the address info (CDv1.0) into fullAddress (CDv1.1)
+                        if let shortAddress = place.address {
+                            if !shortAddress.isEmpty {
+                                let addressComponents = shortAddress.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: ",")
+                                if addressComponents.count >= 3 {
+                                    selectedPlace?.fullAddress?.street = String(addressComponents[0])
+                                    selectedPlace?.fullAddress?.city = String(addressComponents[1].dropFirst())
+                                    selectedPlace?.fullAddress?.state = String(addressComponents[2].dropLast(6).count == 2 ? addressComponents[2].dropLast(6) : addressComponents[2].dropLast(7))
+                                    selectedPlace?.fullAddress?.postalCode = String(addressComponents[2].dropFirst(4))
+                                }
+                            }
+                        }
                     }
+                    
+                    // this should populate the other fields for migration -- seems to be okay
+                    
                     
                     if let data = place.images {
                         do {
@@ -280,6 +325,10 @@ struct DetailView: View {
                         }
                     }
                 }
+                
+                // and saves it without the Edit View
+                try? viewContext.save()
+
             }
             .onDisappear {
                 redrawMap = false
@@ -375,7 +424,7 @@ struct DetailView_Previews: PreviewProvider {
     
     static var previews: some View {
 //        let region = MKCoordinateRegion(center: MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.25), longitudeDelta: CLLocationDegrees(0.25)))
-        DetailView(selectedPlace: .constant(PlaceAnnotation().example), redrawMap: .constant(false))
+        DetailView(selectedPlace: .constant(PlaceAnnotation().example), redrawMap: .constant(false), showingDetailView: .constant(true))
             .onAppear {
                 
             }

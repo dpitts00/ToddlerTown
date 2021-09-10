@@ -74,7 +74,7 @@ struct MapView: UIViewRepresentable {
         }
         
         func getUserLocation() {
-            locationManager = CLLocationManager()
+            locationManager = CLLocationManager.shared
             locationManager?.delegate = self
             locationManager?.requestWhenInUseAuthorization()
             
@@ -143,7 +143,8 @@ struct MapView: UIViewRepresentable {
                 }
                 annotationView?.markerTintColor = color
                 annotationView?.glyphImage = image
-                annotationView?.clusteringIdentifier = identifier
+//                annotationView?.clusteringIdentifier = identifier
+                annotationView?.clusteringIdentifier = "EverythingCluster"
                 return annotationView
             }
             

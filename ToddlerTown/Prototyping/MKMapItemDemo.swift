@@ -32,6 +32,7 @@ struct MKMapItemDemo: View {
 //        let mapItem = MKMapItem()
 
     }
+    
 }
 
 struct MKMapItemDemo_Previews: PreviewProvider {

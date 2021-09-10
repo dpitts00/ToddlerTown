@@ -13,10 +13,6 @@ struct ToddlerTownApp: App {
     
     let persistenceController = PersistenceController.shared
     
-//    @FetchRequest(
-//        sortDescriptors: [],
-//        animation: .default) private var places: FetchedResults<PlaceAnnotation>
-
     var body: some Scene {
         WindowGroup {
             SearchView()

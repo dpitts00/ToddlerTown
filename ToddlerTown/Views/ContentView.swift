@@ -12,7 +12,11 @@ import LinkPresentation
 
 class MapRegion: ObservableObject {
     @Published var region =
-        MKCoordinateRegion(center: CLLocationManager.shared.location?.coordinate ?? CLLocationCoordinate2D(latitude: -43, longitude: 89), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+        MKCoordinateRegion(center: CLLocationManager.shared.location?.coordinate ?? CLLocationCoordinate2D(latitude: 43.074701, longitude: -89.384119), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
+}
+
+class PlaceDistances: ObservableObject {
+    @Published var distances: [PlaceAnnotation: Int] = [:]
 }
 
 struct ContentView: View {
@@ -22,13 +26,14 @@ struct ContentView: View {
 //    @State private var startRegion: MKCoordinateRegion = MKCoordinateRegion(center: CLLocationManager().location?.coordinate ?? MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.5, longitudeDelta: 0.5))
     
     @ObservedObject var mapRegion = MapRegion()
+    @StateObject var distances = PlaceDistances()
     
     @State private var annotations: [PlaceAnnotation] = []
     @State private var showingPlaceDetails = false
     @State private var selectedPlace: PlaceAnnotation?
     @State private var userLocationShown = false
     
-    @State private var userLocation: CLLocationCoordinate2D? = CLLocationManager().location?.coordinate
+    @State private var userLocation: CLLocationCoordinate2D? = CLLocationManager.shared.location?.coordinate
     @State private var redrawMap = false
     @State private var repositionMap = false
     
@@ -38,8 +43,12 @@ struct ContentView: View {
     @State private var indexSet: IndexSet?
     
     @State private var actionSheetShowing = false
-        
-    let locationManager = CLLocationManager()
+    @State private var showingDetailView = true
+    @State private var showingAddView = false
+    
+//    @State private var distances: [PlaceAnnotation: Double] = [:]
+    
+    let locationManager = CLLocationManager.shared
     
     
     var fetchRequest: FetchRequest<PlaceAnnotation>
@@ -49,21 +58,21 @@ struct ContentView: View {
     init(type: PlaceType) {
         switch type {
         case .all:
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [])
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)])
         case .attractions:
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Attractions"))
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)], predicate: NSPredicate(format: "type == %@", "Attractions"))
         case .restaurantsAndCafes:
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Restaurants & Cafés"))
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)], predicate: NSPredicate(format: "type == %@", "Restaurants & Cafés"))
         case .parksAndNature:
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Parks & Nature"))
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)], predicate: NSPredicate(format: "type == %@", "Parks & Nature"))
         case .stores:
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Stores"))
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)], predicate: NSPredicate(format: "type == %@", "Stores"))
         case .librariesAndMuseums:
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Libraries & Museums"))
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)], predicate: NSPredicate(format: "type == %@", "Libraries & Museums"))
         case .friendsAndFamily:
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "type == %@", "Friends & Family"))
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)], predicate: NSPredicate(format: "type == %@", "Friends & Family"))
         case .favorites:
-            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [], predicate: NSPredicate(format: "isFavorite == true"))
+            fetchRequest = FetchRequest<PlaceAnnotation>(entity: PlaceAnnotation.entity(), sortDescriptors: [NSSortDescriptor(keyPath: \PlaceAnnotation.title, ascending: true)], predicate: NSPredicate(format: "isFavorite == true"))
         }
         
 //        if type == "all" {
@@ -110,17 +119,35 @@ struct ContentView: View {
                         }
 
                     NavigationLink(
-                        destination: DetailView(selectedPlace: $selectedPlace, redrawMap: $redrawMap),
+                        destination: DetailView(selectedPlace: $selectedPlace, redrawMap: $redrawMap, showingDetailView: $showingDetailView),
                         isActive: $showingPlaceDetails) { EmptyView() }
                     
-//                    HStack {
-//                        VStack {
-//                            Spacer()
-//                            UserLocationIndicatorView(showingUserLocation: $userLocationShown)
-//                        }
-//                        Spacer()
-//                    }
-//                    .padding([.bottom, .leading])
+                    NavigationLink(
+                        destination: AddPlaceView(),
+                        isActive: $showingAddView) { EmptyView() }
+                    
+                    
+                    HStack {
+                        Spacer()
+
+                        VStack {
+                            Spacer()
+                            Button(action: {
+                                showingAddView = true
+                            }) {
+                                Image(systemName: "plus")
+                            }
+                            .padding()
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .background(
+                                Circle()
+                                    .foregroundColor(.blue)
+                                    .shadow(color: .black.opacity(0.5), radius: 6, x: 2, y: 2)
+                            )
+                        }
+                    }
+                    .padding([.bottom, .trailing])
                         
                 }
                 .tabItem {
@@ -129,11 +156,11 @@ struct ContentView: View {
                 }
 
 
-                
+                // .sorted(by: { distanceFrom(place: $0) < distanceFrom(place: $1) } )
                 List {
-                    ForEach(places.sorted(by: { distanceFrom(place: $0) < distanceFrom(place: $1) } )) { place in
+                    ForEach(places) { place in
                         // change DetailView below to place, not annotation
-                        NavigationLink(destination: DetailView(selectedPlace: .constant(place), redrawMap: $redrawMap)) {
+                        NavigationLink(destination: DetailView(selectedPlace: .constant(place), redrawMap: $redrawMap, showingDetailView: $showingDetailView)) {
                             HStack {
 //                                imageForTypeFromString(place.type ?? "")
                                 PlaceType(rawValue: place.type ?? "All")?.imageForType()
@@ -146,8 +173,10 @@ struct ContentView: View {
                                         .font(.headline)
 //                                        .lineLimit(0)
                                     
-                                    Text("\(getDistance(place: place)) mi away")
-                                        .font(.subheadline)
+                                    if distances.distances[place] != nil {
+                                        Text("\(distances.distances[place] ?? 0) mi away")
+                                            .font(.subheadline)
+                                    }
                                 }
                                 
                                 Spacer()
@@ -156,6 +185,7 @@ struct ContentView: View {
                                     .font(.title2)
                                     .onTapGesture {
                                         place.isFavorite.toggle()
+                                        
                                         do {
                                             try viewContext.save()
                                         } catch {
@@ -170,7 +200,6 @@ struct ContentView: View {
                         deletePlaces(offsets: indexSet)
                     }
                 } // end List
-                 
                 
                 // not sure if $annotations works here instead of places
 //                ListView(places: $annotations, redrawMap: $redrawMap)
@@ -253,6 +282,7 @@ struct ContentView: View {
             
             .onAppear {
                 annotations += places
+                getDistances()
 
                 withAnimation {
                     setRegionForVisiblePlaces()
@@ -285,15 +315,23 @@ struct ContentView: View {
     // Works????
     
     func getLocation() -> CLLocation? {
-        return locationManager.location
+        // testing performance difference with instance vs shared singleton
+        return CLLocationManager.shared.location
     }
     
     func getSelectedPlaceLocation(for place: PlaceAnnotation) -> CLLocation? {
-        // unsafe force unwrap?
         return CLLocation(latitude: place.latitude, longitude: place.longitude)
     }
     
     func getDistance(place: PlaceAnnotation) -> String {
+//        let distance = distances[place] ?? 0
+//
+//        if distance < 1 && distance >= 0 {
+//            return "< 1"
+//        }
+//
+//        return String(distance)
+        
         if getLocation() != nil && getSelectedPlaceLocation(for: place) != nil {
             let distance = (getLocation()!.distance(from: getSelectedPlaceLocation(for: place)!) / 1600)
             if distance < 1 && distance >= 0 {
@@ -307,11 +345,28 @@ struct ContentView: View {
         return "0"
     }
     
-    func distanceFrom(place: PlaceAnnotation) -> Double {
-        if getLocation() != nil && getSelectedPlaceLocation(for: place) != nil {
-            return (getLocation()!.distance(from: getSelectedPlaceLocation(for: place)!) / 1600)
+    func distanceFrom(place: PlaceAnnotation) -> Int {
+        return distances.distances[place] ?? 0
+
+    }
+    
+    func getDistances() {
+        var distances = self.distances.distances
+        DispatchQueue.global().async {
+            if let location = locationManager.location {
+                for place in places {
+                    if distances[place] == nil {
+                        if let placeLocation = getSelectedPlaceLocation(for: place) {
+                            distances[place] = Int(location.distance(from: placeLocation) / 1600)
+                        }
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    self.distances.distances = distances
+                }
+            }
         }
-        return 0
     }
     
     func setRegionForVisiblePlaces() {
@@ -370,8 +425,9 @@ struct ContentView: View {
     private func deletePlaces(offsets: IndexSet) {
         
         withAnimation {
-//            offsets.map { places[$0] }.forEach(viewContext.delete)
-            offsets.map { places.sorted(by: { distanceFrom(place: $0) < distanceFrom(place: $1) } )[$0] }.forEach(viewContext.delete)
+            offsets.map { places[$0] }.forEach(viewContext.delete)
+//            annotations.remove(atOffsets: offsets) // might work, prob not
+//            offsets.map { places.sorted(by: { distanceFrom(place: $0) < distanceFrom(place: $1) } )[$0] }.forEach(viewContext.delete)
 
             do {
                 try viewContext.save()

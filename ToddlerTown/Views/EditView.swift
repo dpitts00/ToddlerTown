@@ -25,7 +25,9 @@ struct EditView: View {
     @State private var countryCode = ""
     @State private var notes = ""
     
-    @State private var region = MKCoordinateRegion(center: CLLocationManager().location?.coordinate ?? MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+    @State private var editAddress = false
+    
+    @State private var region = MKCoordinateRegion(center: CLLocationManager.shared.location?.coordinate ?? MKPlaceAnnotation.example.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
     @State private var userTrackingMode: MapUserTrackingMode = .none
     
     @FetchRequest(
@@ -44,6 +46,10 @@ struct EditView: View {
     @State private var image: UIImage?
     @State private var images: [UIImage] = []
     @State private var imagePickerShowing = false
+    
+    @State private var alertShowing = false
+    
+    @Binding var showingDetailView: Bool
     
     var body: some View {
         /*
@@ -69,16 +75,45 @@ struct EditView: View {
                     .textContentType(.URL)
                 TextField("Phone number", text: $phoneNumber)
                     .textContentType(.telephoneNumber)
-                TextField("Street address", text: $street)
-                    .textContentType(.fullStreetAddress)
-                TextField("City", text: $city)
-                    .textContentType(.addressCity)
-                TextField("State", text: $state)
-                    .textContentType(.addressState)
-                TextField("Postal code", text: $postalCode)
-                    .textContentType(.postalCode)
-                TextField("Country", text: $countryCode)
-                    .textContentType(.countryName)
+                
+                if !editAddress {
+//                    VStack(alignment: .leading) {
+//                        if selectedPlace?.fullAddress?.street != "" {
+//                            Text(selectedPlace?.fullAddress?.street ?? "")
+//                        }
+//                        Text("\(selectedPlace?.fullAddress?.city ?? "") \(selectedPlace?.fullAddress?.state ?? "") \(selectedPlace?.fullAddress?.postalCode ?? "")")
+//                    }
+                    VStack(alignment: .leading) {
+                        if street != "" {
+                            Text(street)
+                        }
+                        Text("\(city) \(state) \(postalCode)")
+                    }
+                } else {
+                    TextField("Street address", text: $street)
+                        .textContentType(.fullStreetAddress)
+                    TextField("City", text: $city)
+                        .textContentType(.addressCity)
+                    TextField("State", text: $state)
+                        .textContentType(.addressState)
+                    TextField("Postal code", text: $postalCode)
+                        .textContentType(.postalCode)
+                    TextField("Country", text: $countryCode)
+                        .textContentType(.countryName)
+                }
+                                
+                Button(action: {
+                    withAnimation {
+                        editAddress.toggle()
+
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: editAddress ? "checkmark" : "pencil")
+                        Text(editAddress ? "Done editing" : "Edit address")
+                    }
+                    .foregroundColor(.blue)
+                }
             }
             
             Picker("Place type", selection: $type) {
@@ -125,12 +160,53 @@ struct EditView: View {
                 })
             }
             
-        }
+            Section {
+                Button(action: {
+                    alertShowing = true
+                }) {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "trash")
+                        Text("Delete Place")
+                        Spacer()
+                    }
+                    .padding(8)
+                    .foregroundColor(.ttRed)
+                }
+            }
+            
+        } // end Form?
         .onAppear {
             selectedPlaceTypeCases = PlaceType.allCases
             selectedPlaceTypeCases.removeAll(where: { $0 == .all || $0 == .favorites })
             
             if let mapItem = mapItem {
+                
+                if let place = places.first(where: { $0.title == mapItem.name && $0.coordinate == mapItem.placemark.coordinate }) {
+                    selectedPlace = place
+                    loadSelectedPlace()
+                    
+//                    let name = mapItem.name
+                    let postalAddress = mapItem.placemark.postalAddress
+    //                let location = mapItem.placemark.location
+                    let phoneNumber = mapItem.phoneNumber
+                    let url = mapItem.url
+                    
+                    street = postalAddress?.street ?? ""
+                    city = postalAddress?.city ?? ""
+                    state = postalAddress?.state ?? ""
+                    postalCode = postalAddress?.postalCode ?? ""
+                    countryCode = postalAddress?.country ?? postalAddress?.isoCountryCode ?? ""
+//                    country = postalAddress?.country ?? ""
+//                    isoCountryCode = postalAddress?.isoCountryCode ?? ""
+//                    subAdministrativeArea = postalAddress?.subAdministrativeArea ?? ""
+//                    subLocality = postalAddress?.subLocality ?? "
+                    
+//                    title = name ?? ""
+                    self.phoneNumber = phoneNumber ?? ""
+                    self.url = url?.absoluteString ?? ""
+                }
+                
                 let name = mapItem.name
                 let postalAddress = mapItem.placemark.postalAddress
 //                let location = mapItem.placemark.location
@@ -211,6 +287,13 @@ struct EditView: View {
         }))
         .sheet(isPresented: $imagePickerShowing, onDismiss: updateImages) {
             ImagePickerView(image: $image)
+        }
+        .alert(isPresented: $alertShowing) {
+            Alert(title: Text("Delete Place?"),
+                  primaryButton: .destructive(Text("Delete"), action: {
+                    deletePlace()
+                  }),
+                  secondaryButton: .cancel())
         }
         
         
@@ -331,50 +414,81 @@ struct EditView: View {
     
     private func addPlace() {
         withAnimation {
-            let newPlace = PlaceAnnotation(context: viewContext)
-            newPlace.id = UUID()
-            newPlace.title = title
-            newPlace.type = type.rawValue
-            newPlace.notes = notes
-            newPlace.isFavorite = false
-            newPlace.phoneNumber = mapItem?.phoneNumber ?? ""
-            newPlace.url = mapItem?.url?.absoluteString ?? ""
+                        
             
-//            if !images.isEmpty {
-//                let data = images[0].jpegData(compressionQuality: 0.8)
-//                newPlace.images = data
-//            }
+            if let mapItem = mapItem,
+               let place = places.first(where: { $0.title == mapItem.name && $0.coordinate == mapItem.placemark.coordinate }),
+               let address = place.fullAddress {
+                place.title = title
+                place.type = type.rawValue
+                place.notes = notes
+//                place.isFavorite = false
+                place.phoneNumber = phoneNumber
+                place.url = url
+                
+                address.street = street
+                address.city = city
+                address.state = state
+                address.postalCode = postalCode
+                address.country = countryCode
+                address.country = mapItem.placemark.country ?? ""
+                address.isoCountryCode = mapItem.placemark.isoCountryCode ?? ""
+                address.subLocality = mapItem.placemark.subLocality ?? ""
+                address.subAdministrativeArea = mapItem.placemark.subAdministrativeArea ?? ""
+                
+//                do {
+//                    let imageData = images.map { $0.jpegData(compressionQuality: 0.8) }
+//                    place.images = try NSKeyedArchiver.archivedData(withRootObject: imageData, requiringSecureCoding: true)
+//                } catch {
+//                    print("Images not serialized. Error: \(error.localizedDescription)")
+//                }
+                
+                place.latitude = mapItem.placemark.coordinate.latitude
+                place.longitude = mapItem.placemark.coordinate.longitude
+                
+            } else {
             
-            let newAddress = FullAddress(context: viewContext)
-            newAddress.id = UUID()
-            newAddress.street = street
-            newAddress.city = city
-            newAddress.state = state
-            newAddress.postalCode = postalCode
-            newAddress.country = mapItem?.placemark.country ?? ""
-            newAddress.isoCountryCode = mapItem?.placemark.isoCountryCode ?? ""
-            newAddress.subLocality = mapItem?.placemark.subLocality ?? ""
-            newAddress.subAdministrativeArea = mapItem?.placemark.subAdministrativeArea ?? ""
-            
-            newPlace.fullAddress = newAddress
-            newAddress.placeAnnotation = newPlace
-            
-            do {
-                let imageData = images.map { $0.jpegData(compressionQuality: 0.8) }
-                newPlace.images = try NSKeyedArchiver.archivedData(withRootObject: imageData, requiringSecureCoding: true)
-            } catch {
-                print("Images not serialized. Error: \(error.localizedDescription)")
+                let newPlace = PlaceAnnotation(context: viewContext)
+                newPlace.id = UUID()
+                newPlace.title = title
+                newPlace.type = type.rawValue
+                newPlace.notes = notes
+                newPlace.isFavorite = false
+                newPlace.phoneNumber = mapItem?.phoneNumber ?? ""
+                newPlace.url = mapItem?.url?.absoluteString ?? ""
+                
+                // *** DO I NEED THIS?
+                
+    //            if !images.isEmpty {
+    //                let data = images[0].jpegData(compressionQuality: 0.8)
+    //                newPlace.images = data
+    //            }
+                
+                let newAddress = FullAddress(context: viewContext)
+                newAddress.id = UUID()
+                newAddress.street = street
+                newAddress.city = city
+                newAddress.state = state
+                newAddress.postalCode = postalCode
+                newAddress.country = mapItem?.placemark.country ?? ""
+                newAddress.isoCountryCode = mapItem?.placemark.isoCountryCode ?? ""
+                newAddress.subLocality = mapItem?.placemark.subLocality ?? ""
+                newAddress.subAdministrativeArea = mapItem?.placemark.subAdministrativeArea ?? ""
+                
+                newPlace.fullAddress = newAddress
+                newAddress.placeAnnotation = newPlace
+                
+                do {
+                    let imageData = images.map { $0.jpegData(compressionQuality: 0.8) }
+                    newPlace.images = try NSKeyedArchiver.archivedData(withRootObject: imageData, requiringSecureCoding: true)
+                } catch {
+                    print("Images not serialized. Error: \(error.localizedDescription)")
+                }
+                
+                newPlace.latitude = mapItem?.placemark.coordinate.latitude ?? 43
+                newPlace.longitude = mapItem?.placemark.coordinate.longitude ?? -89
             }
             
-            
-//            if let selectedPlace = selectedPlace {
-//                newPlace.latitude = selectedPlace.coordinate.latitude
-//                newPlace.longitude = selectedPlace.coordinate.longitude
-//            } else {
-            newPlace.latitude = mapItem?.placemark.coordinate.latitude ?? 43
-            newPlace.longitude = mapItem?.placemark.coordinate.longitude ?? -89
-//            }
-
             do {
                 try viewContext.save()
             } catch {
@@ -436,11 +550,27 @@ struct EditView: View {
             }
         }
     }
+    
+    func deletePlace() {
+        if let selectedPlace = selectedPlace {
+            viewContext.delete(selectedPlace)
+            showingDetailView = false
+        }
+        
+        do {
+            try viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            print("Places not saved. Error: \(nsError)")
+        }
+        
+        presentationMode.wrappedValue.dismiss()
+    }
 }
 
 struct EditView_Previews: PreviewProvider {
     static var previews: some View {
 //        EditView(selectedPlace: .constant(PlaceAnnotation().example), exitMapSearch: .constant(false))
-        EditView(selectedPlace: .constant(nil), mapItem: nil, exitMapSearch: .constant(false))
+        EditView(selectedPlace: .constant(nil), mapItem: nil, exitMapSearch: .constant(false), showingDetailView: .constant(true))
     }
 }
