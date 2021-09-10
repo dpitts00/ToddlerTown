@@ -16,7 +16,7 @@ This app is for an intended audience of adults with young children, making conve
  - Sharing: Share your places with friends and family!
  - Dark mode available!
 
-## New/updated for v1.1
+### New/updated for v1.1
  - Full dark mode support and improved UI
  - Can share maps with friends and family -- export full maps via email/text/AirDrop as .ttplaces files
  - Can share exported files with ToddlerTown app for auto-import 
