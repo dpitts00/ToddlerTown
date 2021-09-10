@@ -1,5 +1,5 @@
 # ToddlerTown
-## ToddlerTown app, v1.1, iOS 14.0+; out now on the App Store!
+## ToddlerTown app, v1.1, iOS 14.0+; out this Saturday on the App Store!
 Written in Swift, using SwiftUI, UIKit, CoreData, and MapKit.
 
 
