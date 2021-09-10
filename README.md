@@ -31,6 +31,8 @@ This app is for an intended audience of adults with young children, making conve
  - Improved Edit Place screen, including collapsible address fields
  - On Add Places screen, searching by category happens automatically when a new category is selected
 
+### Screens (dark mode)
+
 1. After adding places to the map, select a category to filter Map and List views by type.
 
 ![Search View](ToddlerTown/Screens/Search-300.png)
