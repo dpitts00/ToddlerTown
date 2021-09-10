@@ -14,6 +14,7 @@ This app is for an intended audience of adults with young children, making conve
  - List View: View all or filtered places in a list. Can favorite places.
  - Detail View: View the details for a place. Press "Directions" button for directions in Maps app.
  - Sharing: Share your places with friends and family!
+ - Dark mode available!
 
 1. After adding places to the map, select a category to filter Map and List views by type.
 
