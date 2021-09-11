@@ -85,4 +85,24 @@ extension PlaceType {
         }
             
     }
+    
+    func casesByCategoryString() -> [String] {
+        switch self {
+        case .all:
+            return ["amusement park", "aquarium", "bakery", "beach", "cafe", "library", "museum", "park", "restaurant", "toy store", "grocery", "kids clothes", "zoo"]
+        case .parksAndNature:
+            return ["beach", "park"]
+        case .stores:
+            return ["toy store", "grocery", "kids clothes"]
+        case .restaurantsAndCafes:
+            return ["bakery", "cafe", "restaurant"]
+        case .librariesAndMuseums:
+            return ["library", "museum"]
+        case .attractions:
+            return ["amusement park", "aquarium", "zoo"]
+        default:
+            return ["amusement park", "aquarium", "bakery", "beach", "cafe", "library", "museum", "park", "restaurant", "toy store", "grocery", "kids clothes", "zoo"]
+        }
+            
+    }
 }

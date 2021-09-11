@@ -201,9 +201,6 @@ struct AddPlaceView: View {
                                         }
                                         .id(mapItem.id)
                                     }
-    //                                .onChange(of: mapItems.selectedItem) { value in
-    //                                        reader.scrollTo(value)
-    //                                }
                             } else {
                                 Text("No places found. Please search again.")
                                     .italic()
@@ -253,6 +250,10 @@ struct AddPlaceView: View {
                 mapItems.selectedItem = MKMapItem()
                 placesSectionShowing = mapItems.mapItems.isEmpty ? false : true
                 searchKeywordSectionShowing = true
+                
+                selectedType = .all
+                mapSearchType = "byType"
+                searchForMapItems()
             }
         } // end ScrollViewReader
         
@@ -307,6 +308,8 @@ struct AddPlaceView: View {
     }
     
     func searchForMapItems() {
+        if mapSearch.isEmpty && mapSearchType != "byType" { return }
+        
         searchError = false
         mapItems.mapItems.removeAll()
         // doesn't help memory usage; seems to be how much of the map is loaded
@@ -323,29 +326,39 @@ struct AddPlaceView: View {
         searchTypeSectionShowing = false
         searchKeywordSectionShowing = false
         placesSectionShowing = true
-
+        mapItems.mapItems.removeAll()
         
         switch mapSearchType {
-//        case "byAll":
-//            let searchRequest = MKLocalPointsOfInterestRequest(coordinateRegion: self.region)
-//            let filter = MKPointOfInterestFilter(including: PlaceType.all.casesByCategory())
-//            searchRequest.pointOfInterestFilter = filter
+        
+//        case "byType":
+//            let searchRequest = MKLocalPointsOfInterestRequest(coordinateRegion: mapRegion.region)
+//            searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: selectedType.casesByCategory())
+//            print(searchRequest.region)
+//
 //            let search = MKLocalSearch(request: searchRequest)
+//            mapSearchType = ""
 //            startMapSearch(search: search)
-
+        
         case "byType":
-            let searchRequest = MKLocalPointsOfInterestRequest(coordinateRegion: mapRegion.region)
-            searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: selectedType.casesByCategory())
-            print(searchRequest.region)
-
-            let search = MKLocalSearch(request: searchRequest)
-            mapSearchType = ""
-            startMapSearch(search: search)
+            let searchRequest = MKLocalSearch.Request()
+            searchRequest.region = MKCoordinateRegion(center: mapRegion.region.center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+//            searchRequest.pointOfInterestFilter = MKPointOfInterestFilter(including: selectedType.casesByCategory())
+            
+            for category in selectedType.casesByCategoryString() {
+                searchRequest.naturalLanguageQuery = category
+                print(category)
+                let search = MKLocalSearch(request: searchRequest)
+                mapSearchType = ""
+                startMapSearch(search: search)
+            }
+            
+//            let search = MKLocalSearch(request: searchRequest)
+//            mapSearchType = ""
+//            startMapSearch(search: search)
 
         default:
             let searchRequest = MKLocalSearch.Request()
             searchRequest.region = mapRegion.region
-            print(searchRequest.region)
             searchRequest.naturalLanguageQuery = mapSearch
             let search = MKLocalSearch(request: searchRequest)
             startMapSearch(search: search)
@@ -368,18 +381,40 @@ struct AddPlaceView: View {
             
             
             withAnimation {
-                mapItems.mapItems = response.mapItems
-                assert(mapItems.mapItems == response.mapItems, "Map Items are not equal.")
-                if response.mapItems.count >= 2 {
-                    mapRegion.region = response.boundingRegion
-                } else if response.mapItems.count == 1 {
-                    mapRegion.region.center = response.mapItems[0].placemark.coordinate
+                                
+//                mapItems.mapItems += response.mapItems.filter( { abs($0.placemark.coordinate.latitude - latitude) <= 0.05 && abs($0.placemark.coordinate.longitude - longitude) <= 0.05  } )
+                
+                if selectedType != .stores || selectedType != .attractions {
+                    let latitude = mapRegion.region.center.latitude
+                    let longitude = mapRegion.region.center.longitude
+                    
+                    mapItems.mapItems += response.mapItems.filter( {
+                        guard let category = $0.pointOfInterestCategory else { return false }
+                        return selectedType.casesByCategory().contains(category) && abs($0.placemark.coordinate.latitude - latitude) <= 0.05 && abs($0.placemark.coordinate.longitude - longitude) <= 0.05
+                        
+                    } )
+                } else {
+                    mapItems.mapItems += response.mapItems
+//                        .filter( { abs($0.placemark.coordinate.latitude - latitude) <= 0.05 && abs($0.placemark.coordinate.longitude - longitude) <= 0.05
+//
+//                    } )
                 }
-
+                
+//                mapItems.mapItems = response.mapItems
+//                assert(mapItems.mapItems == response.mapItems, "Map Items are not equal.")
+                
+                // REMOVING THIS KEEPS IT CENTERED ON USER LOCATION
+//                if response.mapItems.count >= 2 {
+//                    mapRegion.region = response.boundingRegion
+//                } else if response.mapItems.count == 1 {
+//                    mapRegion.region.center = response.mapItems[0].placemark.coordinate
+//                }
+                
             }
 
         }
     }
+    
 }
 
 struct AddPlaceView_Previews: PreviewProvider {
