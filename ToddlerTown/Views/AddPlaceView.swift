@@ -251,9 +251,9 @@ struct AddPlaceView: View {
                 placesSectionShowing = mapItems.mapItems.isEmpty ? false : true
                 searchKeywordSectionShowing = true
                 
-                selectedType = .all
-                mapSearchType = "byType"
-                searchForMapItems()
+//                selectedType = .all
+//                mapSearchType = "byType"
+//                searchForMapItems()
             }
         } // end ScrollViewReader
         
@@ -326,7 +326,6 @@ struct AddPlaceView: View {
         searchTypeSectionShowing = false
         searchKeywordSectionShowing = false
         placesSectionShowing = true
-        mapItems.mapItems.removeAll()
         
         switch mapSearchType {
         
