@@ -356,9 +356,11 @@ struct AddPlaceView: View {
 //            startMapSearch(search: search)
 
         default:
+//            mapSearchType = "" // redundant?
             let searchRequest = MKLocalSearch.Request()
             searchRequest.region = mapRegion.region
             searchRequest.naturalLanguageQuery = mapSearch
+//            searchRequest.resultTypes = [.address, .pointOfInterest] // redundant?
             let search = MKLocalSearch(request: searchRequest)
             startMapSearch(search: search)
         }
@@ -383,7 +385,10 @@ struct AddPlaceView: View {
                                 
 //                mapItems.mapItems += response.mapItems.filter( { abs($0.placemark.coordinate.latitude - latitude) <= 0.05 && abs($0.placemark.coordinate.longitude - longitude) <= 0.05  } )
                 
-                if selectedType != .stores || selectedType != .attractions {
+//                print(response.mapItems.count)
+//                print(response.mapItems[0].name ?? "", response.mapItems[0].placemark.title ?? "")
+                if !mapSearchType.isEmpty && (selectedType != .stores || selectedType != .attractions) {
+                    print(response.mapItems.count)
                     let latitude = mapRegion.region.center.latitude
                     let longitude = mapRegion.region.center.longitude
                     
@@ -392,6 +397,7 @@ struct AddPlaceView: View {
                         return selectedType.casesByCategory().contains(category) && abs($0.placemark.coordinate.latitude - latitude) <= 0.05 && abs($0.placemark.coordinate.longitude - longitude) <= 0.05
                         
                     } )
+//                    print(mapItems.mapItems)
                 } else {
                     mapItems.mapItems += response.mapItems
 //                        .filter( { abs($0.placemark.coordinate.latitude - latitude) <= 0.05 && abs($0.placemark.coordinate.longitude - longitude) <= 0.05
@@ -409,11 +415,41 @@ struct AddPlaceView: View {
 //                    mapRegion.region.center = response.mapItems[0].placemark.coordinate
 //                }
                 
+                
             }
+            // keep or toss?
+            /*
+            withAnimation {
+                if mapItems.mapItems.count == 1 {
+                    var span = MKCoordinateSpan(latitudeDelta: abs(mapItems.mapItems[0].placemark.coordinate.latitude - mapRegion.region.center.latitude), longitudeDelta: abs(mapItems.mapItems[0].placemark.coordinate.longitude - mapRegion.region.center.longitude))
+                    span = span * 2.5
+                    mapRegion.region.span = span
+                    
+                } else {
+                    mapRegion.region.span = MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
+                }
+
+            }
+            */
 
         }
     }
     
+}
+
+extension MKCoordinateSpan {
+    static func + (lhs: MKCoordinateSpan, rhs: MKCoordinateSpan) -> MKCoordinateSpan {
+        return MKCoordinateSpan(latitudeDelta: lhs.latitudeDelta + rhs.latitudeDelta, longitudeDelta: lhs.longitudeDelta + rhs.longitudeDelta)
+    }
+    
+    static func * (lhs: MKCoordinateSpan, rhs: Double) -> MKCoordinateSpan {
+        return MKCoordinateSpan(latitudeDelta: Double(lhs.latitudeDelta) * rhs, longitudeDelta: Double(lhs.longitudeDelta) * rhs)
+    }
+    
+    // is this right??
+    static func += (lhs: inout MKCoordinateSpan, rhs: MKCoordinateSpan) {
+        lhs = lhs + rhs
+    }
 }
 
 struct AddPlaceView_Previews: PreviewProvider {
