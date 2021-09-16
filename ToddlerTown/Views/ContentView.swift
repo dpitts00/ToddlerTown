@@ -5,19 +5,13 @@
 //  Created by Daniel Pitts on 7/14/21.
 //
 
+// TASKS
+// 1. Break out functions
+
 import SwiftUI
 import CoreData
 import MapKit
 import LinkPresentation
-
-class MapRegion: ObservableObject {
-    @Published var region =
-        MKCoordinateRegion(center: CLLocationManager.shared.location?.coordinate ?? CLLocationCoordinate2D(latitude: 43.074701, longitude: -89.384119), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
-}
-
-class PlaceDistances: ObservableObject {
-    @Published var distances: [PlaceAnnotation: Int] = [:]
-}
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
@@ -46,14 +40,10 @@ struct ContentView: View {
     @State private var showingDetailView = true
     @State private var showingAddView = false
     
-//    @State private var distances: [PlaceAnnotation: Double] = [:]
-    
     let locationManager = CLLocationManager.shared
     
     
     var fetchRequest: FetchRequest<PlaceAnnotation>
-    
-//    let placeTypeCategories = ["All", "Attractions", "Restaurants & Cafés", "Parks & Nature", "Stores", "Libraries", "Friends & Family", "Other"]
     
     init(type: PlaceType) {
         switch type {
@@ -88,16 +78,6 @@ struct ContentView: View {
     
     var body: some View {
         
-//        let region = Binding<MKCoordinateRegion>(
-//            get: {
-//                self.startRegion
-//            },
-//            set: {
-//                self.startRegion = $0
-//            }
-//        )
-        
-//        NavigationView {
         Group {
                     
             if metadata != nil {
@@ -220,7 +200,6 @@ struct ContentView: View {
                         .foregroundColor(Color.ttBlue)
                 }
             )
-//            .navigationBarTitle("ToddlerTown", displayMode: .inline)
             
             .toolbar {
                 ToolbarItem(placement: .principal) {
@@ -250,7 +229,6 @@ struct ContentView: View {
                     
                     Button(action: {
                         // share mapItems
-                        
                         actionSheetShowing = true
                     }) {
                         Image(systemName: "square.and.arrow.up")
@@ -294,9 +272,7 @@ struct ContentView: View {
                       message: Text(alertMessage),
                       dismissButton: .default(Text("OK")))
             }
-        }
-            // on TabView now, which is supposed to be OUTSIDE the navigationView
-//        } // end NavigationView
+        } // end TabView
         
     } // end body
     

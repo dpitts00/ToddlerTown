@@ -8,34 +8,16 @@
 import SwiftUI
 import MapKit
 
-extension MKMapItem: Identifiable {
-    
-}
-
-class MapItems: ObservableObject {
-    @Published var mapItems: [MKMapItem] = []
-    @Published var selectedItem = MKMapItem()
-    static var example: [MKMapItem] = []
-}
-
-//extension MKPointOfInterestCategory: CaseIterable {
-//    public static var allCases: [MKPointOfInterestCategory] {
-//        return [self.airport, self.amusementPark, self.aquarium, self.atm, self.bakery, self.bank, self.beach, self.brewery, self.cafe, self.campground, self.carRental, self.evCharger, self.foodMarket, self.fireStation, self.fitnessCenter, self.gasStation, self.hotel, self.hospital, self.laundry, self.library, self.marina, self.museum, self.movieTheater, self.nightlife, self.nationalPark, self.park, self.police, self.parking, self.pharmacy, self.postOffice, self.publicTransport, self.restroom, self.restaurant, self.store, self.school, self.stadium, self.theater, self.university, self.winery, self.zoo]
-//    }
-//
-//    static var preferredCases: [MKPointOfInterestCategory] {
-//        return [.amusementPark, .aquarium, .bakery, .beach, .cafe, .library, .museum, .nationalPark, .park, .restroom, .restaurant, .store, .zoo]
-//    }
-//}
-
-
+// TASKS
+// 1. Possible change in annotation format?
+// 2. Break out subviews
+// 3. Break out methods (Looooong)
 
 struct AddPlaceView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.presentationMode) private var presentationMode
     @GestureState private var dragOffset = CGSize.zero
     
-//    @State private var region = MKCoordinateRegion(center: CLLocationManager.shared.location?.coordinate ?? CLLocationCoordinate2D(latitude: 43.074701, longitude: -89.384119), span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1))
     @StateObject var mapRegion = MapRegion()
     
     @StateObject var mapItems = MapItems()
@@ -45,8 +27,7 @@ struct AddPlaceView: View {
     
     @State private var pickerPlaceTypes: [PlaceType] = []
     
-    @State private var searchKeywordSectionShowing = true
-    @State private var searchTypeSectionShowing = true
+    @State private var searchShowing = true
     @State private var placesSectionShowing = false
     @State private var searchError = false
     
@@ -113,34 +94,18 @@ struct AddPlaceView: View {
                         Image(systemName: "magnifyingglass")
                         Text("Search by keyword or category")
                         Spacer()
-                        Image(systemName: searchKeywordSectionShowing ? "chevron.down" : "chevron.forward")
+                        Image(systemName: searchShowing ? "chevron.down" : "chevron.forward")
                     }
                     .onTapGesture {
                         withAnimation {
-                            searchKeywordSectionShowing.toggle()
+                            searchShowing.toggle()
                         }
                     }
                     .foregroundColor(.ttBlue)
                     ) {
-                        if searchKeywordSectionShowing {
+                        if searchShowing {
                             TextField("Search by keyword...", text: $mapSearch, onCommit: searchForMapItems)
-    //                    }
-    //                }
-                    
-    //                Section(header: HStack {
-    //                    Image(systemName: "magnifyingglass")
-    //                    Text("Search by type")
-    //                    Spacer()
-    //                    Image(systemName: searchKeywordSectionShowing ? "chevron.down" : "chevron.forward")
-    //                }
-    //                .onTapGesture {
-    //                    withAnimation {
-    //                        searchTypeSectionShowing.toggle()
-    //                    }
-    //                }
-    //                .foregroundColor(.ttBlue)
-    //                ) {
-    //                    if searchTypeSectionShowing {
+                            
                             Picker("Select category", selection: $selectedType) {
                                 ForEach(pickerPlaceTypes, id: \.self) { type in
                                     Text(type.rawValue.localizedCapitalized)
@@ -249,7 +214,7 @@ struct AddPlaceView: View {
             .onAppear {
                 mapItems.selectedItem = MKMapItem()
                 placesSectionShowing = mapItems.mapItems.isEmpty ? false : true
-                searchKeywordSectionShowing = true
+                searchShowing = true
                 
 //                selectedType = .all
 //                mapSearchType = "byType"
@@ -312,19 +277,7 @@ struct AddPlaceView: View {
         
         searchError = false
         mapItems.mapItems.removeAll()
-        // doesn't help memory usage; seems to be how much of the map is loaded
-        
-//        withAnimation {
-//            if searchTypeSectionShowing {
-//                searchTypeSectionShowing = false
-//            }
-//
-//            if searchKeywordSectionShowing {
-//                searchKeywordSectionShowing = false
-//            }
-//        }
-        searchTypeSectionShowing = false
-        searchKeywordSectionShowing = false
+        searchShowing = false
         placesSectionShowing = true
         
         switch mapSearchType {
@@ -375,8 +328,7 @@ struct AddPlaceView: View {
             guard let response = response else {
                 print(error?.localizedDescription ?? "Error unknown.")
                 searchError = true
-                searchTypeSectionShowing = true
-                searchKeywordSectionShowing = true
+                searchShowing = true
                 return
             }
             
@@ -437,20 +389,6 @@ struct AddPlaceView: View {
     
 }
 
-extension MKCoordinateSpan {
-    static func + (lhs: MKCoordinateSpan, rhs: MKCoordinateSpan) -> MKCoordinateSpan {
-        return MKCoordinateSpan(latitudeDelta: lhs.latitudeDelta + rhs.latitudeDelta, longitudeDelta: lhs.longitudeDelta + rhs.longitudeDelta)
-    }
-    
-    static func * (lhs: MKCoordinateSpan, rhs: Double) -> MKCoordinateSpan {
-        return MKCoordinateSpan(latitudeDelta: Double(lhs.latitudeDelta) * rhs, longitudeDelta: Double(lhs.longitudeDelta) * rhs)
-    }
-    
-    // is this right??
-    static func += (lhs: inout MKCoordinateSpan, rhs: MKCoordinateSpan) {
-        lhs = lhs + rhs
-    }
-}
 
 struct AddPlaceView_Previews: PreviewProvider {
     static var previews: some View {

@@ -52,17 +52,6 @@ struct EditView: View {
     @Binding var showingDetailView: Bool
     
     var body: some View {
-        /*
-        let updatedRegion = Binding<MKCoordinateRegion>(
-            get: {
-                self.region
-            },
-            set: {
-                self.region = $0
-                print("New region is \(self.region).")
-            }
-        )
-         */
         
         Form {
             Group {
@@ -543,10 +532,8 @@ struct EditView: View {
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                print("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
@@ -570,7 +557,6 @@ struct EditView: View {
 
 struct EditView_Previews: PreviewProvider {
     static var previews: some View {
-//        EditView(selectedPlace: .constant(PlaceAnnotation().example), exitMapSearch: .constant(false))
         EditView(selectedPlace: .constant(nil), mapItem: nil, exitMapSearch: .constant(false), showingDetailView: .constant(true))
     }
 }

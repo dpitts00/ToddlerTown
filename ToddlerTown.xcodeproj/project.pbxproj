@@ -8,9 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DF0047F326E86AC3007DC036 /* icon1024.png in Resources */ = {isa = PBXBuildFile; fileRef = DF0047F226E86AC3007DC036 /* icon1024.png */; };
-		DF0F99E726A274FF003A5530 /* ContentViewOriginal.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0F99E626A274FF003A5530 /* ContentViewOriginal.swift */; };
-		DF1F39EE26BB298900567F9A /* MyColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1F39ED26BB298900567F9A /* MyColors.swift */; };
-		DF27335926BA540D0073FEE8 /* TextOutline.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF27335826BA540D0073FEE8 /* TextOutline.swift */; };
+		DF1F39EE26BB298900567F9A /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF1F39ED26BB298900567F9A /* ColorExtension.swift */; };
 		DF2FADC326C3208A0064B920 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF2FADC226C3208A0064B920 /* CloudKit.framework */; };
 		DF36DA3E26DDE4900000E4E8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DF36DA3D26DDE4900000E4E8 /* LaunchScreen.storyboard */; };
 		DF3B141D26A4DEF00082A11D /* MKPlaceAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF3B141C26A4DEF00082A11D /* MKPlaceAnnotation.swift */; };
@@ -30,7 +28,11 @@
 		DF8364E3269F7B940028BFB3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DF8364E2269F7B940028BFB3 /* Preview Assets.xcassets */; };
 		DF8364E5269F7B940028BFB3 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8364E4269F7B940028BFB3 /* Persistence.swift */; };
 		DF8364E8269F7B940028BFB3 /* ToddlerTown.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DF8364E6269F7B940028BFB3 /* ToddlerTown.xcdatamodeld */; };
-		DF8EFD8C26DD3C2200CE637B /* MKMapItemDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8EFD8B26DD3C2200CE637B /* MKMapItemDemo.swift */; };
+		DF8F42E226F3C7DA008A7F56 /* MapItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8F42E126F3C7DA008A7F56 /* MapItems.swift */; };
+		DF8F42E426F3C808008A7F56 /* MKMapItemExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8F42E326F3C808008A7F56 /* MKMapItemExtension.swift */; };
+		DF8F42E626F3C8BE008A7F56 /* MKCoordinateSpanExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8F42E526F3C8BE008A7F56 /* MKCoordinateSpanExtension.swift */; };
+		DF8F42E826F3C8F8008A7F56 /* MapRegion.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8F42E726F3C8F8008A7F56 /* MapRegion.swift */; };
+		DF8F42EA26F3C923008A7F56 /* PlaceDistances.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF8F42E926F3C923008A7F56 /* PlaceDistances.swift */; };
 		DFB729F726DE8F4C003D0082 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB729F626DE8F4C003D0082 /* Formatters.swift */; };
 		DFE64C99269F8E6D00836C4E /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE64C98269F8E6D00836C4E /* MapView.swift */; };
 		DFE64C9B26A0027D00836C4E /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFE64C9A26A0027D00836C4E /* DetailView.swift */; };
@@ -45,13 +47,10 @@
 
 /* Begin PBXFileReference section */
 		DF0047F226E86AC3007DC036 /* icon1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon1024.png; sourceTree = "<group>"; };
-		DF0F99E626A274FF003A5530 /* ContentViewOriginal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewOriginal.swift; sourceTree = "<group>"; };
-		DF1F39ED26BB298900567F9A /* MyColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MyColors.swift; path = ToddlerTown/Helpers/MyColors.swift; sourceTree = SOURCE_ROOT; };
+		DF1F39ED26BB298900567F9A /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ColorExtension.swift; path = ToddlerTown/Extensions/ColorExtension.swift; sourceTree = SOURCE_ROOT; };
 		DF1F39FD26BBB68200567F9A /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		DF27335826BA540D0073FEE8 /* TextOutline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextOutline.swift; sourceTree = "<group>"; };
 		DF2FADC026C3206C0064B920 /* ToddlerTown.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ToddlerTown.entitlements; sourceTree = "<group>"; };
 		DF2FADC226C3208A0064B920 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
-		DF34485C26B4534B0013466E /* TASKS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = TASKS.md; sourceTree = "<group>"; };
 		DF36DA3D26DDE4900000E4E8 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DF3B141C26A4DEF00082A11D /* MKPlaceAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKPlaceAnnotation.swift; sourceTree = "<group>"; };
 		DF439E7A26A8791500503964 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -76,7 +75,11 @@
 		DF8364E4269F7B940028BFB3 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		DF8364E7269F7B940028BFB3 /* ToddlerTown.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ToddlerTown.xcdatamodel; sourceTree = "<group>"; };
 		DF8364E9269F7B940028BFB3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DF8EFD8B26DD3C2200CE637B /* MKMapItemDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKMapItemDemo.swift; sourceTree = "<group>"; };
+		DF8F42E126F3C7DA008A7F56 /* MapItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapItems.swift; sourceTree = "<group>"; };
+		DF8F42E326F3C808008A7F56 /* MKMapItemExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKMapItemExtension.swift; sourceTree = "<group>"; };
+		DF8F42E526F3C8BE008A7F56 /* MKCoordinateSpanExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MKCoordinateSpanExtension.swift; sourceTree = "<group>"; };
+		DF8F42E726F3C8F8008A7F56 /* MapRegion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRegion.swift; sourceTree = "<group>"; };
+		DF8F42E926F3C923008A7F56 /* PlaceDistances.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceDistances.swift; sourceTree = "<group>"; };
 		DFB729F626DE8F4C003D0082 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Formatters.swift; sourceTree = "<group>"; };
 		DFE64C98269F8E6D00836C4E /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		DFE64C9A26A0027D00836C4E /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
@@ -130,9 +133,8 @@
 				DFE64C98269F8E6D00836C4E /* MapView.swift */,
 				DFE64CA026A1E14700836C4E /* EditView.swift */,
 				DFE64C9A26A0027D00836C4E /* DetailView.swift */,
-				DF8155F326AB1B0300D04684 /* DetailMapView.swift */,
+				DF8F42EB26F3CA30008A7F56 /* Unused */,
 				DF4BA39C26ADF4C80079000E /* ImagePickerView.swift */,
-				DF7B25EE26B9E04000C3E02B /* PlacemarkAnnotationView.swift */,
 				DF807C0B26E940E900BFA5B2 /* ActivityController.swift */,
 				DF807C0A26E940E900BFA5B2 /* ActivityViewController.swift */,
 				DF807C0C26E940E900BFA5B2 /* MapLinkView.swift */,
@@ -143,23 +145,14 @@
 		DF7584FC26B1CDF0003E410A /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				DFF6F1F426E720AC00C5D560 /* CLLocationCoordEquatable.swift */,
-				DF3B141C26A4DEF00082A11D /* MKPlaceAnnotation.swift */,
-				DF75850026B1CE51003E410A /* PlaceAnnotationExtension.swift */,
+				DF8F42EC26F3CA85008A7F56 /* Unused */,
 				DFF6F1FB26E7F55600C5D560 /* ExportPlaces.swift */,
 				DF7584FE26B1CE1C003E410A /* PlaceType.swift */,
+				DF8F42E726F3C8F8008A7F56 /* MapRegion.swift */,
+				DF8F42E126F3C7DA008A7F56 /* MapItems.swift */,
+				DF8F42E926F3C923008A7F56 /* PlaceDistances.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		DF7584FD26B1CE04003E410A /* Prototyping */ = {
-			isa = PBXGroup;
-			children = (
-				DF27335826BA540D0073FEE8 /* TextOutline.swift */,
-				DF8EFD8B26DD3C2200CE637B /* MKMapItemDemo.swift */,
-				DF0F99E626A274FF003A5530 /* ContentViewOriginal.swift */,
-			);
-			path = Prototyping;
 			sourceTree = "<group>";
 		};
 		DF8364CF269F7B930028BFB3 = {
@@ -188,14 +181,11 @@
 		DF8364DA269F7B930028BFB3 /* ToddlerTown */ = {
 			isa = PBXGroup;
 			children = (
+				DF8F42ED26F3CA96008A7F56 /* Extensions */,
 				DF2FADC026C3206C0064B920 /* ToddlerTown.entitlements */,
-				DF34485C26B4534B0013466E /* TASKS.md */,
 				DF8364DB269F7B930028BFB3 /* ToddlerTownApp.swift */,
-				DFD3C08026B202410037BDB8 /* Screens */,
-				DF7584FD26B1CE04003E410A /* Prototyping */,
 				DF7584FA26B1CDA8003E410A /* CoreData */,
 				DF7584FB26B1CDD3003E410A /* Views */,
-				DFB729F526DE8F37003D0082 /* Helpers */,
 				DF7584FC26B1CDF0003E410A /* Models */,
 				DF8364DF269F7B940028BFB3 /* Assets.xcassets */,
 				DF8364E9269F7B940028BFB3 /* Info.plist */,
@@ -213,21 +203,35 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		DFB729F526DE8F37003D0082 /* Helpers */ = {
+		DF8F42EB26F3CA30008A7F56 /* Unused */ = {
 			isa = PBXGroup;
 			children = (
-				DFB729F626DE8F4C003D0082 /* Formatters.swift */,
-				DF1F39ED26BB298900567F9A /* MyColors.swift */,
-				DFF6F1E726DF123700C5D560 /* LocationManagerSingleton.swift */,
+				DF8155F326AB1B0300D04684 /* DetailMapView.swift */,
+				DF7B25EE26B9E04000C3E02B /* PlacemarkAnnotationView.swift */,
 			);
-			path = Helpers;
+			path = Unused;
 			sourceTree = "<group>";
 		};
-		DFD3C08026B202410037BDB8 /* Screens */ = {
+		DF8F42EC26F3CA85008A7F56 /* Unused */ = {
 			isa = PBXGroup;
 			children = (
+				DF3B141C26A4DEF00082A11D /* MKPlaceAnnotation.swift */,
 			);
-			path = Screens;
+			path = Unused;
+			sourceTree = "<group>";
+		};
+		DF8F42ED26F3CA96008A7F56 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				DF1F39ED26BB298900567F9A /* ColorExtension.swift */,
+				DFF6F1F426E720AC00C5D560 /* CLLocationCoordEquatable.swift */,
+				DF75850026B1CE51003E410A /* PlaceAnnotationExtension.swift */,
+				DFF6F1E726DF123700C5D560 /* LocationManagerSingleton.swift */,
+				DF8F42E326F3C808008A7F56 /* MKMapItemExtension.swift */,
+				DFB729F626DE8F4C003D0082 /* Formatters.swift */,
+				DF8F42E526F3C8BE008A7F56 /* MKCoordinateSpanExtension.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,20 +308,23 @@
 			files = (
 				DFF6F1F326E15A2800C5D560 /* AddPlaceView.swift in Sources */,
 				DFF6F1FC26E7F55600C5D560 /* ExportPlaces.swift in Sources */,
-				DF8EFD8C26DD3C2200CE637B /* MKMapItemDemo.swift in Sources */,
-				DF0F99E726A274FF003A5530 /* ContentViewOriginal.swift in Sources */,
 				DF807C0D26E940E900BFA5B2 /* ActivityViewController.swift in Sources */,
 				DFB729F726DE8F4C003D0082 /* Formatters.swift in Sources */,
 				DF8364E8269F7B940028BFB3 /* ToddlerTown.xcdatamodeld in Sources */,
+				DF8F42E226F3C7DA008A7F56 /* MapItems.swift in Sources */,
 				DF4BA39D26ADF4C80079000E /* ImagePickerView.swift in Sources */,
-				DF1F39EE26BB298900567F9A /* MyColors.swift in Sources */,
+				DF1F39EE26BB298900567F9A /* ColorExtension.swift in Sources */,
+				DF8F42E826F3C8F8008A7F56 /* MapRegion.swift in Sources */,
 				DFE64C9B26A0027D00836C4E /* DetailView.swift in Sources */,
 				DF3B141D26A4DEF00082A11D /* MKPlaceAnnotation.swift in Sources */,
 				DFF6F1E826DF123700C5D560 /* LocationManagerSingleton.swift in Sources */,
 				DF7B25ED26B8CDB400C3E02B /* GettingStartedView.swift in Sources */,
 				DF8364E5269F7B940028BFB3 /* Persistence.swift in Sources */,
+				DF8F42EA26F3C923008A7F56 /* PlaceDistances.swift in Sources */,
 				DFF6F1F526E720AC00C5D560 /* CLLocationCoordEquatable.swift in Sources */,
+				DF8F42E626F3C8BE008A7F56 /* MKCoordinateSpanExtension.swift in Sources */,
 				DF807C0F26E940E900BFA5B2 /* MapLinkView.swift in Sources */,
+				DF8F42E426F3C808008A7F56 /* MKMapItemExtension.swift in Sources */,
 				DFE64C99269F8E6D00836C4E /* MapView.swift in Sources */,
 				DF75850126B1CE51003E410A /* PlaceAnnotationExtension.swift in Sources */,
 				DF8155F426AB1B0300D04684 /* DetailMapView.swift in Sources */,
@@ -325,7 +332,6 @@
 				DFE64CA126A1E14700836C4E /* EditView.swift in Sources */,
 				DF439E7B26A8791500503964 /* SearchView.swift in Sources */,
 				DF7584FF26B1CE1C003E410A /* PlaceType.swift in Sources */,
-				DF27335926BA540D0073FEE8 /* TextOutline.swift in Sources */,
 				DF8364DE269F7B930028BFB3 /* ContentView.swift in Sources */,
 				DF807C0E26E940E900BFA5B2 /* ActivityController.swift in Sources */,
 				DF8364DC269F7B930028BFB3 /* ToddlerTownApp.swift in Sources */,

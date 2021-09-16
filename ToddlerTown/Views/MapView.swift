@@ -170,24 +170,3 @@ struct MapView: UIViewRepresentable {
     }
     
 }
-
-/*
-extension MapView {
-    func placeForAnnotation(annotation: MKPlaceAnnotation) -> PlaceAnnotation? {
-        return places.first(where: { $0.id == annotation.id })
-    }
-
-}
-*/
- 
-/*
-struct MapView_Previews: PreviewProvider {
-    
-    
-    static var previews: some View {
-        let region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: CLLocationDegrees(43.16), longitude: CLLocationDegrees(-89.37)), span: MKCoordinateSpan(latitudeDelta: CLLocationDegrees(0.1), longitudeDelta: CLLocationDegrees(0.1)))
-        
-        MapView(type: "park", selectedPlace: .constant(MKPlaceAnnotation.example), showingPlaceDetails: .constant(false), region: .constant(region), userLocationShown: .constant(true), userLocation: .constant(MKPlaceAnnotation.example.coordinate))
-    }
-}
-*/

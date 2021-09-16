@@ -5,6 +5,9 @@
 //  Created by Daniel Pitts on 8/2/21.
 //
 
+// TASKS:
+// 1. Make ScrollView sections a separate view, pass text and image name as args
+
 import SwiftUI
 
 struct GettingStartedView: View {

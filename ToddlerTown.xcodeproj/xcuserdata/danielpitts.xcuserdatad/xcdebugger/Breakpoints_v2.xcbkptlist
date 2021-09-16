@@ -14,8 +14,8 @@
             filePath = "ToddlerTown/Views/AddPlaceView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "402"
-            endingLineNumber = "402"
+            startingLineNumber = "354"
+            endingLineNumber = "354"
             landmarkName = "startMapSearch(search:)"
             landmarkType = "7">
          </BreakpointContent>

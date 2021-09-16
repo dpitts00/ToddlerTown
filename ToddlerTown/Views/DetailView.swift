@@ -203,16 +203,6 @@ struct DetailView: View {
                             UIApplication.shared.open(url)
                         }
                     },
-//                    .default(Text("Open as URL")) {
-//                        // open as URL (Apple Maps)
-//                        let name = selectedPlace?.title ?? ""
-//                        let address = selectedPlace?.address ?? ""
-//                        let urlString = "https://maps.apple.com/?address=\(name),\(address)"
-//                        let urlStringFormatted = urlString.split(separator: " ").joined(separator: "+").replacingOccurrences(of: "+", with: "%20").replacingOccurrences(of: ",", with: "%2C")
-//                        if let url = URL(string: urlStringFormatted) {
-//                            UIApplication.shared.open(url)
-//                        }
-//                    },
                     .cancel()
                 ])
             }

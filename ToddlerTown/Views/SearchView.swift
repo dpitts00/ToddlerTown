@@ -13,14 +13,10 @@ struct SearchView: View {
     
     @State private var infoShowing = false
     
-//    let placeTypes = PlaceType.allCases
-//    let placeTypeCategories = ["All", "Favorites", "Attractions", "Restaurants & Cafés", "Parks & Nature", "Stores", "Libraries", "Friends & Family", "Other"]
-//    let placeTypeImages = ["All": "mappin", "Favorites": "heart", "Parks & Nature": "leaf", "Restaurants & Cafés": "rectangle.roundedbottom", "Attractions": "ticket", "Friends & Family": "person", "Libraries": "text.book.closed", "Stores": "cart", "Other": "mappin"]
-//    let placeTypeColors: [String: Color] = ["All": .pink, "Favorites": .red, "Parks & Nature": .green, "Restaurants & Cafés": .blue, "Attractions": .purple, "Friends & Family": .red, "Libraries": .orange, "Stores": .yellow, "Other": .pink]
-    
     @FetchRequest(
         sortDescriptors: [],
-        animation: .default) private var places: FetchedResults<PlaceAnnotation>
+        animation: .default)
+    private var places: FetchedResults<PlaceAnnotation>
     
     var body: some View {
                 
